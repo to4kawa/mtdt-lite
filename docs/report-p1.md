@@ -45,4 +45,4 @@ python3 -m unittest discover -s tests -p "test_*.py"
 - Spec: `docs/spec.yaml`
 - Test spec: `docs/spec.test.yaml`
 - Report: `docs/report-p1.md`
-- Tool root: `。`（`check_shelf.py` / `skills/` / `tests/`）
+- Tool root: `.`（`check_shelf.py` / `skills/` / `tests/`）
