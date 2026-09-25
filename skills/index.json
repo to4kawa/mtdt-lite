@@ -1,0 +1,2190 @@
+{
+  "catalog_sha256": "30ac14f99de7cb382a96f1f2ebbdae2c380a784665a86a3903723d40afa906a4",
+  "schema_version": "1",
+  "skills": [
+    {
+      "body_path": "beaming-dynamics-conventions.md",
+      "body_sha256": "d823b9e31896c472d2f666f31fe033f84b8949bdd77fb07ef0a2d056ea47d9aa",
+      "category": "notation",
+      "composes_with": [
+        "phrase-arc",
+        "texture-density"
+      ],
+      "effects": [
+        "changes the visual representation or part layout, not the sounding intent"
+      ],
+      "ensemble": [
+        "mixed"
+      ],
+      "examples": [
+        "A phrase-shaped beam group in 4/4.",
+        "A crescendo aligned with a rising melodic line."
+      ],
+      "failure_modes": [
+        "Beaming that hides the beat.",
+        "A dynamic mark attached to the wrong staff."
+      ],
+      "id": "beaming-dynamics-conventions",
+      "idiom": [
+        "common-practice",
+        "baroque",
+        "jazz",
+        "film"
+      ],
+      "inputs": [
+        "musical content and notation context",
+        "instrument transposition or layout requirements"
+      ],
+      "level": "intermediate",
+      "mode": "transform",
+      "not_when": [
+        "when the source has no rhythmic or dynamic evidence at all"
+      ],
+      "ops": [],
+      "outputs": [
+        "engraving decisions",
+        "a readable notation or part plan"
+      ],
+      "preconditions": [
+        "pitch, rhythm, and instrument identities are available"
+      ],
+      "requires": [
+        "note-values"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "拍のグループと強弱の記譜を読みやすく整える。",
+      "theory_refs": [
+        "MusicXML notation: beams and directions",
+        "Open Music Theory: metric grouping"
+      ],
+      "title": "Beaming and Dynamics Conventions",
+      "use_when": [
+        "apply beaming and dynamic conventions"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "binary-ternary.md",
+      "body_sha256": "d128c91bfefeb7496ebe7dc9106e277286e1642bbd022714b0c89aafd6244eea",
+      "category": "form",
+      "composes_with": [
+        "phrase-arc"
+      ],
+      "effects": [
+        "organizes or evaluates large-scale musical structure"
+      ],
+      "ensemble": [
+        "mixed"
+      ],
+      "examples": [
+        "A repeated A section after a contrasting B section.",
+        "A rounded binary with a partial return."
+      ],
+      "failure_modes": [
+        "Counting bars without identifying function.",
+        "Calling any repeated chorus section binary."
+      ],
+      "id": "binary-ternary",
+      "idiom": [
+        "common-practice",
+        "baroque",
+        "pop"
+      ],
+      "inputs": [
+        "a section map, phrase labels, or a formal hypothesis",
+        "harmonic and melodic landmarks"
+      ],
+      "level": "intermediate",
+      "mode": "analyze",
+      "not_when": [
+        "when the form is through-composed and no recurring section can be justified"
+      ],
+      "ops": [],
+      "outputs": [
+        "formal labels and relationships",
+        "candidate section or transition plans"
+      ],
+      "preconditions": [
+        "the score has enough landmarks to compare sections"
+      ],
+      "requires": [
+        "period-sentence",
+        "theme-and-variation"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "二部・三部形式の構成関係を説明する。",
+      "theory_refs": [
+        "Open Music Theory: binary and ternary forms",
+        "Caplin, Classical Form (library reference)"
+      ],
+      "title": "Binary and Ternary Form",
+      "use_when": [
+        "analyze binary or ternary form"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "breath-phrase-limits.md",
+      "body_sha256": "f3a40a7065cdd303074dd628ab95a5797c23e2aa036ccd1fb77359b099f91514",
+      "category": "playability",
+      "composes_with": [
+        "wind-pairing"
+      ],
+      "effects": [
+        "protects human execution feasibility without changing musical intent automatically"
+      ],
+      "ensemble": [
+        "winds",
+        "brass",
+        "voice"
+      ],
+      "examples": [
+        "A wind phrase respired at a cadence.",
+        "A voice line adjusted at a textual boundary."
+      ],
+      "failure_modes": [
+        "A long phrase with no feasible breath point.",
+        "A high-register crescendo that exceeds endurance."
+      ],
+      "id": "breath-phrase-limits",
+      "idiom": [
+        "common-practice",
+        "baroque",
+        "film"
+      ],
+      "inputs": [
+        "an instrument-specific part",
+        "range, technique, endurance, and phrasing constraints"
+      ],
+      "level": "advanced",
+      "mode": "check",
+      "not_when": [
+        "when the part is an unpitched sound-effect sketch"
+      ],
+      "ops": [],
+      "outputs": [
+        "feasibility findings",
+        "candidate simplifications or redirections"
+      ],
+      "preconditions": [
+        "the part and intended performer are identified"
+      ],
+      "requires": [
+        "phrase-arc"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "息とフレーズの物理的実現可能性を確認する。",
+      "theory_refs": [
+        "Orchestration texts: wind and voice technique",
+        "Open Music Theory: phrasing"
+      ],
+      "title": "Breath and Phrase Limits",
+      "use_when": [
+        "check wind breathing and phrase feasibility"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "cadence-types.md",
+      "body_sha256": "1c48de4af746887ddc8870e50e4037546d9a0df86be05a3428863acbfacf311d",
+      "category": "harmony",
+      "composes_with": [
+        "phrase-arc",
+        "satb-chorale-harmonization"
+      ],
+      "effects": [
+        "changes or evaluates vertical harmony and its functional motion"
+      ],
+      "ensemble": [
+        "satb",
+        "piano",
+        "mixed"
+      ],
+      "examples": [
+        "A soprano arrival on a V-I authentic cadence.",
+        "A deceptive V-vi ending in a folk-like phrase."
+      ],
+      "failure_modes": [
+        "Calling a half cadence authentic because both end on V.",
+        "Forcing a perfect authentic cadence onto a non cadential phrase."
+      ],
+      "id": "cadence-types",
+      "idiom": [
+        "common-practice",
+        "baroque",
+        "jazz"
+      ],
+      "inputs": [
+        "chord tones or a harmonic progression",
+        "key, meter, and phrase context"
+      ],
+      "level": "intermediate",
+      "mode": "generate",
+      "not_when": [
+        "for analysis-only requests that do not request a cadence"
+      ],
+      "ops": [],
+      "outputs": [
+        "Roman-numeral or function analysis",
+        "candidate chord and cadence choices"
+      ],
+      "preconditions": [
+        "the vertical sonorities or harmonic intent can be identified"
+      ],
+      "requires": [
+        "functional-harmony-basics"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "終止形を用途と声部進行に合わせて選ぶ。",
+      "theory_refs": [
+        "Open Music Theory: cadences",
+        "Kostka, Tonal Harmony (library reference)"
+      ],
+      "title": "Cadence Types",
+      "use_when": [
+        "choose a cadence for a harmonic phrase"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "clefs-and-transposing-instruments.md",
+      "body_sha256": "dd18c0f2ba695024d6d7b467a9cffda509bb0a79a3be2d2d12cf9e3a06ebc4e2",
+      "category": "notation",
+      "composes_with": [
+        "satb-closed-score",
+        "musicxml-roundtrip"
+      ],
+      "effects": [
+        "changes the visual representation or part layout, not the sounding intent"
+      ],
+      "ensemble": [
+        "winds",
+        "brass",
+        "mixed"
+      ],
+      "examples": [
+        "A horn part written in F with correct sounding pitch.",
+        "A treble-to-bass clef change for a low part."
+      ],
+      "failure_modes": [
+        "Applying a B-flat transposition to a C instrument.",
+        "Confusing octave displacement with a key change."
+      ],
+      "id": "clefs-and-transposing-instruments",
+      "idiom": [
+        "common-practice",
+        "baroque",
+        "jazz",
+        "film"
+      ],
+      "inputs": [
+        "musical content and notation context",
+        "instrument transposition or layout requirements"
+      ],
+      "level": "advanced",
+      "mode": "transform",
+      "not_when": [
+        "when the instrument is defined as a non-transposing sound or the key is unknown"
+      ],
+      "ops": [],
+      "outputs": [
+        "engraving decisions",
+        "a readable notation or part plan"
+      ],
+      "preconditions": [
+        "pitch, rhythm, and instrument identities are available"
+      ],
+      "requires": [
+        "key-signatures"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "移調楽器と譜表の種類を正確に反映する。",
+      "theory_refs": [
+        "MusicXML notation: clef and transpose elements",
+        "MIDI 1.0 instrument and channel conventions"
+      ],
+      "title": "Clefs and Transposing Instruments",
+      "use_when": [
+        "notate clefs and transposing instruments"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "dissonance-treatment.md",
+      "body_sha256": "bc96af79477108aa8e66bf913fbee7867da6a47e3b6048791deef5a0eb31e0b6",
+      "category": "counterpoint",
+      "composes_with": [
+        "species-counterpoint-1"
+      ],
+      "effects": [
+        "adds or evaluates independent lines while preserving the source material"
+      ],
+      "ensemble": [
+        "satb",
+        "voice"
+      ],
+      "examples": [
+        "A passing seventh resolving down by step.",
+        "A labeled stylistic suspension."
+      ],
+      "failure_modes": [
+        "Leaving a dissonance on a strong beat without a label.",
+        "Over-resolving every dissonance at the cost of contour."
+      ],
+      "id": "dissonance-treatment",
+      "idiom": [
+        "common-practice",
+        "baroque"
+      ],
+      "inputs": [
+        "two or more independent voices",
+        "a fixed cantus or melodic line when applicable"
+      ],
+      "level": "advanced",
+      "mode": "transform",
+      "not_when": [
+        "when the texture is intentionally atonal and no rule is declared"
+      ],
+      "ops": [],
+      "outputs": [
+        "candidate voice lines or voice-leading decisions",
+        "a list of independence risks"
+      ],
+      "preconditions": [
+        "voice identities and time positions are clear"
+      ],
+      "requires": [
+        "voice-leading-rules",
+        "parallel-motion-avoidance"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "不協和音の解決方針と準備を説明する。",
+      "theory_refs": [
+        "Open Music Theory: dissonance and suspension",
+        "Fux, Gradus ad Parnassum (public-domain edition)"
+      ],
+      "title": "Dissonance Treatment",
+      "use_when": [
+        "resolve dissonance according to counterpoint rules"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "functional-harmony-basics.md",
+      "body_sha256": "693c94dcc6555b9e6d0532bac150d0e3bf78dc51159daf112024c9e0854c2bee",
+      "category": "harmony",
+      "composes_with": [
+        "cadence-types",
+        "satb-chorale-harmonization"
+      ],
+      "effects": [
+        "changes or evaluates vertical harmony and its functional motion"
+      ],
+      "ensemble": [
+        "satb",
+        "piano"
+      ],
+      "examples": [
+        "A I-V-vi-IV loop.",
+        "A tonicization followed by a return to the global key."
+      ],
+      "failure_modes": [
+        "Using one symbol system inconsistently.",
+        "Ignoring chromatic chords or tonicization."
+      ],
+      "id": "functional-harmony-basics",
+      "idiom": [
+        "common-practice",
+        "baroque"
+      ],
+      "inputs": [
+        "chord tones or a harmonic progression",
+        "key, meter, and phrase context"
+      ],
+      "level": "intermediate",
+      "mode": "analyze",
+      "not_when": [
+        "when the style is intentionally nonfunctional"
+      ],
+      "ops": [],
+      "outputs": [
+        "Roman-numeral or function analysis",
+        "candidate chord and cadence choices"
+      ],
+      "preconditions": [
+        "the vertical sonorities or harmonic intent can be identified"
+      ],
+      "requires": [
+        "key-signatures",
+        "metric-hierarchy"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "和音の機能とローマ数字を説明する基礎カード。",
+      "theory_refs": [
+        "Open Music Theory: harmonic function",
+        "Kostka, Tonal Harmony (library reference)"
+      ],
+      "title": "Functional Harmony Basics",
+      "use_when": [
+        "analyze functional harmony and Roman numerals"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "key-signatures.md",
+      "body_sha256": "b68a2ecb696603ad4ce59c1608a271244034fadb37c6ca3d20f80d231e933a4f",
+      "category": "foundations",
+      "composes_with": [
+        "modulation-common-tone"
+      ],
+      "effects": [
+        "clarifies musical meaning without changing the underlying score"
+      ],
+      "ensemble": [],
+      "examples": [
+        "A signature with a deceptive cadence.",
+        "A passage that shifts between relative keys."
+      ],
+      "failure_modes": [
+        "Assuming every signature implies the same tonal behavior.",
+        "Ignoring a temporary modulation."
+      ],
+      "id": "key-signatures",
+      "idiom": [
+        "common-practice"
+      ],
+      "inputs": [
+        "pitch, interval, key, or meter context",
+        "a notation or audio-derived description when available"
+      ],
+      "level": "basic",
+      "mode": "analyze",
+      "not_when": [
+        "when the tonality is deliberately modal or disputed"
+      ],
+      "ops": [],
+      "outputs": [
+        "normalized musical vocabulary",
+        "a concise explanation of relationships"
+      ],
+      "preconditions": [
+        "the musical context and symbols are available"
+      ],
+      "requires": [
+        "pitch-spelling-scales"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "調号と調性を旋律・和声の証拠から確認する基礎カード。",
+      "theory_refs": [
+        "Open Music Theory: key and scale relationships",
+        "Music notation fundamentals: key signatures"
+      ],
+      "title": "Key Signatures",
+      "use_when": [
+        "identify key signatures and relative keys"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "melisma-vs-syllabic.md",
+      "body_sha256": "e8dbe72a819c9ad87aad34d4a4912b4fe3026f91df6f439c84a486c4ff53e2b6",
+      "category": "text_setting",
+      "composes_with": [
+        "melodic-contour"
+      ],
+      "effects": [
+        "changes the relationship between text and musical time"
+      ],
+      "ensemble": [
+        "voice"
+      ],
+      "examples": [
+        "A sustained final vowel at a cadence.",
+        "A clear syllabic setting for a text-heavy verse."
+      ],
+      "failure_modes": [
+        "A word stretched over a long phrase without a clear vowel.",
+        "One-note-per-syllable setting that obscures a natural accent."
+      ],
+      "id": "melisma-vs-syllabic",
+      "idiom": [
+        "common-practice",
+        "folk",
+        "film"
+      ],
+      "inputs": [
+        "lyrics or syllables",
+        "melodic rhythm, accents, and language context"
+      ],
+      "level": "intermediate",
+      "mode": "analyze",
+      "not_when": [
+        "when the text has no stable language or syllable boundaries"
+      ],
+      "ops": [],
+      "outputs": [
+        "syllable-to-note alignment",
+        "candidate underlay and melisma choices"
+      ],
+      "preconditions": [
+        "lyrics and note timing are available in a compatible form"
+      ],
+      "requires": [
+        "syllable-underlay-basics",
+        "phrase-arc"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "Melismaと syllabic の選択を説明する。",
+      "theory_refs": [
+        "MusicXML lyrics and syllabic elements",
+        "Open Music Theory: text and melody"
+      ],
+      "title": "Melisma versus Syllabic Setting",
+      "use_when": [
+        "choose melisma or syllabic setting"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "melodic-contour.md",
+      "body_sha256": "c05d0818318439ff9268586df2396f800804d95695485d412c15ab41ded8193d",
+      "category": "melody",
+      "composes_with": [
+        "motive-development",
+        "phrase-arc"
+      ],
+      "effects": [
+        "develops or evaluates a melody without replacing its identity"
+      ],
+      "ensemble": [
+        "solo",
+        "mixed"
+      ],
+      "examples": [
+        "An arch-shaped phrase with a delayed climax.",
+        "A line whose contour expands before a cadence."
+      ],
+      "failure_modes": [
+        "Calling a small range monotonous when rhythm creates contrast.",
+        "Ignoring a registral shift caused by instrumentation."
+      ],
+      "id": "melodic-contour",
+      "idiom": [
+        "common-practice",
+        "jazz",
+        "film"
+      ],
+      "inputs": [
+        "a motive, phrase, or melodic contour",
+        "a stylistic and tonal context"
+      ],
+      "level": "basic",
+      "mode": "analyze",
+      "not_when": [
+        "when only a chord chart is available and no melody is supplied"
+      ],
+      "ops": [],
+      "outputs": [
+        "contour observations",
+        "candidate developments or phrase plans"
+      ],
+      "preconditions": [
+        "the melodic material has identifiable boundaries or notes"
+      ],
+      "requires": [
+        "pitch-intervals"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "旋律の輪郭と音程方向を説明し評価する。",
+      "theory_refs": [
+        "Open Music Theory: melody and contour",
+        "Schoenberg, Fundamentals of Musical Composition (library reference)"
+      ],
+      "title": "Melodic Contour",
+      "use_when": [
+        "analyze melodic contour and interval direction"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "metric-hierarchy.md",
+      "body_sha256": "669282dac40faacb9e6ec7909da89dc8f70091fa364c961210d8665dec82714f",
+      "category": "foundations",
+      "composes_with": [
+        "note-values",
+        "phrase-arc"
+      ],
+      "effects": [
+        "clarifies musical meaning without changing the underlying score"
+      ],
+      "ensemble": [
+        "mixed"
+      ],
+      "examples": [
+        "3/4 as three quarter-note beats.",
+        "A 5/8 grouping with two plus three eighth notes."
+      ],
+      "failure_modes": [
+        "Confusing beat hierarchy with a visual beaming choice.",
+        "Assuming all measures carry equal musical weight."
+      ],
+      "id": "metric-hierarchy",
+      "idiom": [
+        "common-practice"
+      ],
+      "inputs": [
+        "pitch, interval, key, or meter context",
+        "a notation or audio-derived description when available"
+      ],
+      "level": "basic",
+      "mode": "analyze",
+      "not_when": [
+        "when the meter is not established"
+      ],
+      "ops": [],
+      "outputs": [
+        "normalized musical vocabulary",
+        "a concise explanation of relationships"
+      ],
+      "preconditions": [
+        "the musical context and symbols are available"
+      ],
+      "requires": [],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "拍と節、小節の共通語彙を説明する。",
+      "theory_refs": [
+        "Open Music Theory: meter and rhythm",
+        "Music notation fundamentals: measures and beats"
+      ],
+      "title": "Metric Hierarchy",
+      "use_when": [
+        "explain meter beat hierarchy and measure structure"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "midi-export-basics.md",
+      "body_sha256": "0cf7aacc83d59cc64b000e67254e4e361c0411d21996cdc9624eba85bb0fccad",
+      "category": "production_export",
+      "composes_with": [
+        "texture-density"
+      ],
+      "effects": [
+        "moves or validates musical data across a boundary"
+      ],
+      "ensemble": [
+        "mixed"
+      ],
+      "examples": [
+        "A four-part score exported as four channels.",
+        "A repeat structure checked after export."
+      ],
+      "failure_modes": [
+        "Dropping a repeat or misreading a tie.",
+        "Treating MIDI as a print-score interchange format."
+      ],
+      "id": "midi-export-basics",
+      "idiom": [
+        "common-practice",
+        "jazz",
+        "pop",
+        "film"
+      ],
+      "inputs": [
+        "a validated musical source",
+        "a target interchange or delivery format"
+      ],
+      "level": "intermediate",
+      "mode": "generate",
+      "not_when": [
+        "when the score depends on unpitched visual notation with no MIDI interpretation"
+      ],
+      "ops": [],
+      "outputs": [
+        "an export plan or validated interchange artifact"
+      ],
+      "preconditions": [
+        "source content and format requirements are known"
+      ],
+      "requires": [
+        "musicxml-roundtrip",
+        "note-values"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "MIDI エクスポートの意味論と制約を確認する。",
+      "theory_refs": [
+        "MIDI 1.0 Detailed Specification",
+        "MIDI Association: MIDI device and file concepts"
+      ],
+      "title": "MIDI Export Basics",
+      "use_when": [
+        "export a score to MIDI"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "modulation-common-tone.md",
+      "body_sha256": "9a33832e093c237c740b710a8040f343f49e899e979b7839912a06cd1f9fed3f",
+      "category": "harmony",
+      "composes_with": [
+        "cadence-types"
+      ],
+      "effects": [
+        "changes or evaluates vertical harmony and its functional motion"
+      ],
+      "ensemble": [
+        "satb",
+        "piano"
+      ],
+      "examples": [
+        "A pivot chord between relative keys.",
+        "A common-tone bass transition into a new cadence."
+      ],
+      "failure_modes": [
+        "Changing key labels without a confirming cadence.",
+        "Selecting a pivot that requires awkward spelling."
+      ],
+      "id": "modulation-common-tone",
+      "idiom": [
+        "common-practice",
+        "baroque"
+      ],
+      "inputs": [
+        "chord tones or a harmonic progression",
+        "key, meter, and phrase context"
+      ],
+      "level": "advanced",
+      "mode": "transform",
+      "not_when": [
+        "when the music must remain in one unambiguous key"
+      ],
+      "ops": [],
+      "outputs": [
+        "Roman-numeral or function analysis",
+        "candidate chord and cadence choices"
+      ],
+      "preconditions": [
+        "the vertical sonorities or harmonic intent can be identified"
+      ],
+      "requires": [
+        "secondary-dominants",
+        "key-signatures"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "共通音を使って調移動を滑らかに計画する。",
+      "theory_refs": [
+        "Open Music Theory: modulation",
+        "Kostka, Tonal Harmony (library reference)"
+      ],
+      "title": "Common-Tone Modulation",
+      "use_when": [
+        "plan a modulation using common tones"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "motive-development.md",
+      "body_sha256": "a86e5fd5b1aa8379027aebda133e4d2f92a55d65a296fc54717a6900444f73f6",
+      "category": "melody",
+      "composes_with": [
+        "phrase-arc"
+      ],
+      "effects": [
+        "develops or evaluates a melody without replacing its identity"
+      ],
+      "ensemble": [
+        "solo",
+        "mixed"
+      ],
+      "examples": [
+        "A two-note motive expanded by step sequence.",
+        "A motive passed between voices with a new cadence."
+      ],
+      "failure_modes": [
+        "Losing the motive after one transformation.",
+        "Overusing a sequence until the phrase loses contrast."
+      ],
+      "id": "motive-development",
+      "idiom": [
+        "common-practice",
+        "baroque",
+        "film"
+      ],
+      "inputs": [
+        "a motive, phrase, or melodic contour",
+        "a stylistic and tonal context"
+      ],
+      "level": "intermediate",
+      "mode": "generate",
+      "not_when": [
+        "when writing a new theme from scratch with no source motive"
+      ],
+      "ops": [],
+      "outputs": [
+        "contour observations",
+        "candidate developments or phrase plans"
+      ],
+      "preconditions": [
+        "the melodic material has identifiable boundaries or notes"
+      ],
+      "requires": [
+        "melodic-contour",
+        "sequence-technique"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "動機を順序・模倣・変形で発展させる。",
+      "theory_refs": [
+        "Open Music Theory: motive and development",
+        "Schoenberg, Fundamentals of Musical Composition (library reference)"
+      ],
+      "title": "Motive Development",
+      "use_when": [
+        "develop a motive by sequence and imitation"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "musicxml-roundtrip.md",
+      "body_sha256": "93b3a7b28d6323b3c38e2a51f8cc54bf49d2c68cfb26f3fd9ee5c7b005674776",
+      "category": "production_export",
+      "composes_with": [
+        "midi-export-basics"
+      ],
+      "effects": [
+        "moves or validates musical data across a boundary"
+      ],
+      "ensemble": [
+        "mixed"
+      ],
+      "examples": [
+        "A score with tied notes and transposing parts.",
+        "A layout-only change that leaves the sound equivalent."
+      ],
+      "failure_modes": [
+        "Dropping a direction or lyric syllable.",
+        "Changing an instrument octave during export."
+      ],
+      "id": "musicxml-roundtrip",
+      "idiom": [
+        "common-practice",
+        "jazz",
+        "film"
+      ],
+      "inputs": [
+        "a validated musical source",
+        "a target interchange or delivery format"
+      ],
+      "level": "advanced",
+      "mode": "check",
+      "not_when": [
+        "when the source or target is an undocumented proprietary binary"
+      ],
+      "ops": [],
+      "outputs": [
+        "an export plan or validated interchange artifact"
+      ],
+      "preconditions": [
+        "source content and format requirements are known"
+      ],
+      "requires": [
+        "clefs-and-transposing-instruments"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "MusicXML の往復で失う情報を検査する。",
+      "theory_refs": [
+        "W3C MusicXML specification: score-partwise",
+        "MusicXML documentation: interchange best practices"
+      ],
+      "title": "MusicXML Roundtrip",
+      "use_when": [
+        "validate a MusicXML roundtrip"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "note-values.md",
+      "body_sha256": "212c0877c941485349000ff905bf957036c567cfdbaa6bf18e5ff5b88b8ed511",
+      "category": "rhythm",
+      "composes_with": [
+        "syncopation-basics",
+        "phrase-arc"
+      ],
+      "effects": [
+        "changes or evaluates rhythmic placement while retaining meter and pulse"
+      ],
+      "ensemble": [
+        "mixed"
+      ],
+      "examples": [
+        "A dotted rhythm across a barline.",
+        "A triplet that preserves the underlying pulse."
+      ],
+      "failure_modes": [
+        "Misreading a tied duration as repeated attacks.",
+        "Confusing a subdivision with a beat change."
+      ],
+      "id": "note-values",
+      "idiom": [
+        "common-practice",
+        "jazz",
+        "pop"
+      ],
+      "inputs": [
+        "meter, beat position, note values, or a rhythmic pattern",
+        "a pulse or dance context when relevant"
+      ],
+      "level": "basic",
+      "mode": "analyze",
+      "not_when": [
+        "when the timebase is unavailable or intentionally free"
+      ],
+      "ops": [],
+      "outputs": [
+        "a rhythmic interpretation",
+        "candidate transformations that retain the source identity"
+      ],
+      "preconditions": [
+        "time positions and meter are known"
+      ],
+      "requires": [
+        "metric-hierarchy"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "音符の時値と拍位を正確に説明する。",
+      "theory_refs": [
+        "Open Music Theory: note values and meter",
+        "MIDI 1.0 timing concepts"
+      ],
+      "title": "Note Values and Metric Placement",
+      "use_when": [
+        "identify note values and metric placement"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "parallel-motion-avoidance.md",
+      "body_sha256": "cf6583f19ae95b2852c7992f7f49b4750951d6dd11dd4248236a3fcb76c8180e",
+      "category": "counterpoint",
+      "composes_with": [
+        "dissonance-treatment"
+      ],
+      "effects": [
+        "adds or evaluates independent lines while preserving the source material"
+      ],
+      "ensemble": [
+        "satb",
+        "strings"
+      ],
+      "examples": [
+        "Two voices moving from a fifth to another fifth.",
+        "A contrary-motion perfect interval that remains legal."
+      ],
+      "failure_modes": [
+        "Skipping a pair because one note is an ornament.",
+        "Confusing parallel fifths with a single perfect fifth."
+      ],
+      "id": "parallel-motion-avoidance",
+      "idiom": [
+        "common-practice",
+        "baroque"
+      ],
+      "inputs": [
+        "two or more independent voices",
+        "a fixed cantus or melodic line when applicable"
+      ],
+      "level": "advanced",
+      "mode": "check",
+      "not_when": [
+        "when checking horizontal melodic intervals only"
+      ],
+      "ops": [],
+      "outputs": [
+        "candidate voice lines or voice-leading decisions",
+        "a list of independence risks"
+      ],
+      "preconditions": [
+        "voice identities and time positions are clear"
+      ],
+      "requires": [
+        "voice-leading-rules"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "平行5度・8度などの禁止進行を明示的に検出する。",
+      "theory_refs": [
+        "Open Music Theory: contrapuntal motion",
+        "Fux, Gradus ad Parnassum (public-domain edition)"
+      ],
+      "title": "Parallel Motion Avoidance",
+      "use_when": [
+        "detect parallel fifths and parallel octaves"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "period-sentence.md",
+      "body_sha256": "13fb494d8de4c1d35f10e1fcb9eff4f2ff0138960454d39524298fe31729358d",
+      "category": "form",
+      "composes_with": [
+        "binary-ternary"
+      ],
+      "effects": [
+        "organizes or evaluates large-scale musical structure"
+      ],
+      "ensemble": [
+        "solo",
+        "satb",
+        "mixed"
+      ],
+      "examples": [
+        "An antecedent ending on a half cadence and consequent closure.",
+        "A sentence with a stronger continuation."
+      ],
+      "failure_modes": [
+        "Forcing a period onto an through-composed phrase.",
+        "Ignoring a cadence that is syntactically implied."
+      ],
+      "id": "period-sentence",
+      "idiom": [
+        "common-practice"
+      ],
+      "inputs": [
+        "a section map, phrase labels, or a formal hypothesis",
+        "harmonic and melodic landmarks"
+      ],
+      "level": "advanced",
+      "mode": "analyze",
+      "not_when": [
+        "when the phrase lacks a stable cadential or antecedent-consequent relation"
+      ],
+      "ops": [],
+      "outputs": [
+        "formal labels and relationships",
+        "candidate section or transition plans"
+      ],
+      "preconditions": [
+        "the score has enough landmarks to compare sections"
+      ],
+      "requires": [
+        "phrase-arc",
+        "cadence-types"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "周期と文の構造を終止とともに説明する。",
+      "theory_refs": [
+        "Open Music Theory: periods and sentences",
+        "Caplin, Classical Form (library reference)"
+      ],
+      "title": "Period and Sentence Analysis",
+      "use_when": [
+        "analyze a period or sentence phrase"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "phrase-arc.md",
+      "body_sha256": "382072bd8e35f98c61e142d691adaec66cb3d54d85119d5b75e3d51ec0e9be1d",
+      "category": "melody",
+      "composes_with": [
+        "period-sentence",
+        "binary-ternary"
+      ],
+      "effects": [
+        "develops or evaluates a melody without replacing its identity"
+      ],
+      "ensemble": [
+        "solo",
+        "satb",
+        "mixed"
+      ],
+      "examples": [
+        "An eight-bar phrase with a late cadence.",
+        "A sub-phrase ending on a weaker harmony."
+      ],
+      "failure_modes": [
+        "Over-segmenting a single long phrase.",
+        "Ignoring a cadence that contradicts the assumed arc."
+      ],
+      "id": "phrase-arc",
+      "idiom": [
+        "common-practice",
+        "baroque",
+        "film"
+      ],
+      "inputs": [
+        "a motive, phrase, or melodic contour",
+        "a stylistic and tonal context"
+      ],
+      "level": "intermediate",
+      "mode": "analyze",
+      "not_when": [
+        "when no phrase boundary or temporal context is available"
+      ],
+      "ops": [],
+      "outputs": [
+        "contour observations",
+        "candidate developments or phrase plans"
+      ],
+      "preconditions": [
+        "the melodic material has identifiable boundaries or notes"
+      ],
+      "requires": [
+        "metric-hierarchy",
+        "cadence-types"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "フレーズの緊張・弛緩と終止配置を説明する。",
+      "theory_refs": [
+        "Open Music Theory: phrases and form",
+        "Caplin, Classical Form (library reference)"
+      ],
+      "title": "Phrase Arc",
+      "use_when": [
+        "analyze phrase arc and cadence placement"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "piano-idiomatic-limits.md",
+      "body_sha256": "49d41a1072e691c7a310ce4712e4083bed11806320cf97647f7174b04c969714",
+      "category": "playability",
+      "composes_with": [
+        "string-double-stops",
+        "texture-density"
+      ],
+      "effects": [
+        "protects human execution feasibility without changing musical intent automatically"
+      ],
+      "ensemble": [
+        "piano"
+      ],
+      "examples": [
+        "A wide tonic chord offered in two positions.",
+        "A leap that is playable after a hand redistribution."
+      ],
+      "failure_modes": [
+        "A span that cannot be held comfortably.",
+        "A repeated chord that exceeds practical stamina."
+      ],
+      "id": "piano-idiomatic-limits",
+      "idiom": [
+        "common-practice",
+        "jazz",
+        "pop"
+      ],
+      "inputs": [
+        "an instrument-specific part",
+        "range, technique, endurance, and phrasing constraints"
+      ],
+      "level": "advanced",
+      "mode": "check",
+      "not_when": [
+        "when the part is explicitly schematic or graphic rather than performable notation"
+      ],
+      "ops": [],
+      "outputs": [
+        "feasibility findings",
+        "candidate simplifications or redirections"
+      ],
+      "preconditions": [
+        "the part and intended performer are identified"
+      ],
+      "requires": [
+        "note-values"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "ピアノの物理的・器楽的実現可能性を確認する。",
+      "theory_refs": [
+        "Piano technique references: fingering and span",
+        "Open Music Theory: keyboard voice leading"
+      ],
+      "title": "Piano Idiomatic Limits",
+      "use_when": [
+        "check whether piano writing is physically playable"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "pitch-intervals.md",
+      "body_sha256": "91f2609fac05880e86793710fa1e0b13e977e4f64a3e6c4c5199f3d1c9b99b96",
+      "category": "foundations",
+      "composes_with": [
+        "pitch-spelling-scales"
+      ],
+      "effects": [
+        "clarifies musical meaning without changing the underlying score"
+      ],
+      "ensemble": [],
+      "examples": [
+        "A minor third above C.",
+        "A compound sixth spanning an octave."
+      ],
+      "failure_modes": [
+        "Counting semitones while ignoring spelling.",
+        "Calling every third consonant regardless of context."
+      ],
+      "id": "pitch-intervals",
+      "idiom": [
+        "common-practice"
+      ],
+      "inputs": [
+        "pitch, interval, key, or meter context",
+        "a notation or audio-derived description when available"
+      ],
+      "level": "basic",
+      "mode": "analyze",
+      "not_when": [
+        "when only a chord label is available"
+      ],
+      "ops": [],
+      "outputs": [
+        "normalized musical vocabulary",
+        "a concise explanation of relationships"
+      ],
+      "preconditions": [
+        "the musical context and symbols are available"
+      ],
+      "requires": [
+        "metric-hierarchy"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "音程を計算し、旋律や和声でどう機能するかを説明する。",
+      "theory_refs": [
+        "Open Music Theory: intervals",
+        "Music theory fundamentals: interval quality and size"
+      ],
+      "title": "Pitch Intervals",
+      "use_when": [
+        "analyze pitch intervals"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "pitch-spelling-scales.md",
+      "body_sha256": "46ca40e907085f5dbd9f1b662d76240a6b781d71dc2d60a29ea680cbe4faf8f9",
+      "category": "foundations",
+      "composes_with": [
+        "pitch-intervals",
+        "key-signatures"
+      ],
+      "effects": [
+        "clarifies musical meaning without changing the underlying score"
+      ],
+      "ensemble": [],
+      "examples": [
+        "C major versus A minor pitch collections.",
+        "A diminished-seventh spelling in a functional cadence."
+      ],
+      "failure_modes": [
+        "Confusing a chromatic inflection with a scale-degree change.",
+        "Ignoring the key or meter that changes the best label."
+      ],
+      "id": "pitch-spelling-scales",
+      "idiom": [
+        "common-practice"
+      ],
+      "inputs": [
+        "pitch, interval, key, or meter context",
+        "a notation or audio-derived description when available"
+      ],
+      "level": "basic",
+      "mode": "analyze",
+      "not_when": [
+        "when enharmonic spelling is already fixed by a source"
+      ],
+      "ops": [],
+      "outputs": [
+        "normalized musical vocabulary",
+        "a concise explanation of relationships"
+      ],
+      "preconditions": [
+        "the musical context and symbols are available"
+      ],
+      "requires": [],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "音名と音階を正規化して理解するための基礎カード。",
+      "theory_refs": [
+        "Open Music Theory: pitch spelling and scale vocabulary",
+        "Music notation fundamentals: pitch and scale reference"
+      ],
+      "title": "Pitch Spelling and Scales",
+      "use_when": [
+        "spell pitches and identify scales"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "rhythmic-variation.md",
+      "body_sha256": "7b047c07cc7519fcf7dece03291eca7d285eb5ee37c47f909e30785ed1796e47",
+      "category": "rhythm",
+      "composes_with": [
+        "motive-development"
+      ],
+      "effects": [
+        "changes or evaluates rhythmic placement while retaining meter and pulse"
+      ],
+      "ensemble": [
+        "mixed"
+      ],
+      "examples": [
+        "A dotted pattern rephrased in syncopated subdivisions.",
+        "A repeated cell with a changed final accent."
+      ],
+      "failure_modes": [
+        "Turning a rhythm into an unrelated groove.",
+        "Claiming identity when only tempo changed."
+      ],
+      "id": "rhythmic-variation",
+      "idiom": [
+        "common-practice",
+        "jazz",
+        "pop"
+      ],
+      "inputs": [
+        "meter, beat position, note values, or a rhythmic pattern",
+        "a pulse or dance context when relevant"
+      ],
+      "level": "advanced",
+      "mode": "transform",
+      "not_when": [
+        "when the source rhythm is too short to identify a pattern"
+      ],
+      "ops": [],
+      "outputs": [
+        "a rhythmic interpretation",
+        "candidate transformations that retain the source identity"
+      ],
+      "preconditions": [
+        "time positions and meter are known"
+      ],
+      "requires": [
+        "note-values",
+        "syncopation-basics"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "リズムの骨格を残して変奏する。",
+      "theory_refs": [
+        "Open Music Theory: rhythmic variation",
+        "MIDI 1.0 timing concepts"
+      ],
+      "title": "Rhythmic Variation",
+      "use_when": [
+        "vary a rhythm while preserving its identity"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "satb-chorale-harmonization.md",
+      "body_sha256": "2b3668bcfbc826150d25b5e07c897964c45ada78f7289ddad5160eba36177ee9",
+      "category": "harmony",
+      "composes_with": [
+        "satb-closed-score",
+        "species-counterpoint-1"
+      ],
+      "effects": [
+        "changes or evaluates vertical harmony and its functional motion"
+      ],
+      "ensemble": [
+        "satb",
+        "voice"
+      ],
+      "examples": [
+        "A soprano-bass pair harmonized in four parts.",
+        "A cadence with a controlled inner-voice resolution."
+      ],
+      "failure_modes": [
+        "Adding an inner voice that destroys the phrase rhythm.",
+        "Doubling a tendency tone without a declared exception."
+      ],
+      "id": "satb-chorale-harmonization",
+      "idiom": [
+        "common-practice",
+        "baroque"
+      ],
+      "inputs": [
+        "chord tones or a harmonic progression",
+        "key, meter, and phrase context"
+      ],
+      "level": "advanced",
+      "mode": "generate",
+      "not_when": [
+        "when the texture is monophonic or the form has no harmonic role"
+      ],
+      "ops": [],
+      "outputs": [
+        "Roman-numeral or function analysis",
+        "candidate chord and cadence choices"
+      ],
+      "preconditions": [
+        "the vertical sonorities or harmonic intent can be identified"
+      ],
+      "requires": [
+        "functional-harmony-basics",
+        "cadence-types",
+        "voice-leading-rules"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "ソプラノとバスを固定した条件下で四声和声を設計する。",
+      "theory_refs": [
+        "Open Music Theory: four-part writing",
+        "Fux, Gradus ad Parnassum (public-domain edition)"
+      ],
+      "title": "SATB Chorale Harmonization",
+      "use_when": [
+        "harmonize a soprano and bass as SATB"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "satb-closed-score.md",
+      "body_sha256": "0e6e962fe27f8261ffe54526fa6558e5ff963b75f7e5d675acf2cf7433dca38c",
+      "category": "notation",
+      "composes_with": [
+        "voice-leading-rules"
+      ],
+      "effects": [
+        "changes the visual representation or part layout, not the sounding intent"
+      ],
+      "ensemble": [
+        "satb",
+        "voice"
+      ],
+      "examples": [
+        "A four-staff closed score with a cadence.",
+        "A layout using a tenor clef to reduce ledger lines."
+      ],
+      "failure_modes": [
+        "A soprano and tenor hidden on the same ledger region.",
+        "A staff layout that makes eighth notes ambiguous."
+      ],
+      "id": "satb-closed-score",
+      "idiom": [
+        "common-practice",
+        "baroque"
+      ],
+      "inputs": [
+        "musical content and notation context",
+        "instrument transposition or layout requirements"
+      ],
+      "level": "advanced",
+      "mode": "generate",
+      "not_when": [
+        "when the user needs a single condensed piano reduction instead of four independent parts"
+      ],
+      "ops": [],
+      "outputs": [
+        "engraving decisions",
+        "a readable notation or part plan"
+      ],
+      "preconditions": [
+        "pitch, rhythm, and instrument identities are available"
+      ],
+      "requires": [
+        "satb-chorale-harmonization"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "4声のクローズドスコアを読みやすく記譜する。",
+      "theory_refs": [
+        "MusicXML notation: score-partwise",
+        "Open Music Theory: four-part reading"
+      ],
+      "title": "SATB Closed Score",
+      "use_when": [
+        "notate a SATB closed score"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "secondary-dominants.md",
+      "body_sha256": "9a309f0c2d9f223ebb24214a3cad409de629637d8c0f7010ad9b96e328954d58",
+      "category": "harmony",
+      "composes_with": [
+        "modulation-common-tone"
+      ],
+      "effects": [
+        "changes or evaluates vertical harmony and its functional motion"
+      ],
+      "ensemble": [
+        "satb",
+        "piano"
+      ],
+      "examples": [
+        "V/V resolving to V in a major key.",
+        "A brief applied dominant before a continuation."
+      ],
+      "failure_modes": [
+        "Labeling every chromatic chord as a secondary dominant.",
+        "Leaving the temporary dominant unresolved."
+      ],
+      "id": "secondary-dominants",
+      "idiom": [
+        "common-practice",
+        "jazz"
+      ],
+      "inputs": [
+        "chord tones or a harmonic progression",
+        "key, meter, and phrase context"
+      ],
+      "level": "advanced",
+      "mode": "generate",
+      "not_when": [
+        "when modulation must remain strictly diatonic"
+      ],
+      "ops": [],
+      "outputs": [
+        "Roman-numeral or function analysis",
+        "candidate chord and cadence choices"
+      ],
+      "preconditions": [
+        "the vertical sonorities or harmonic intent can be identified"
+      ],
+      "requires": [
+        "functional-harmony-basics"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "二次属音と解決を和声的に導入する。",
+      "theory_refs": [
+        "Open Music Theory: tonicization",
+        "Kostka, Tonal Harmony (library reference)"
+      ],
+      "title": "Secondary Dominants",
+      "use_when": [
+        "apply secondary dominants with correct resolution"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "sequence-technique.md",
+      "body_sha256": "e3595a43cb503e48b82d2ba76f64a24cd415564bf9f6ee659d1439bc656408a3",
+      "category": "melody",
+      "composes_with": [
+        "motive-development"
+      ],
+      "effects": [
+        "develops or evaluates a melody without replacing its identity"
+      ],
+      "ensemble": [
+        "solo",
+        "satb"
+      ],
+      "examples": [
+        "A diatonic sequence in a cadential progression.",
+        "A circle-of-fifths sequence leading to a dominant."
+      ],
+      "failure_modes": [
+        "Creating a sequence with no harmonic support.",
+        "Ending too many repetitions before a cadence."
+      ],
+      "id": "sequence-technique",
+      "idiom": [
+        "common-practice",
+        "baroque"
+      ],
+      "inputs": [
+        "a motive, phrase, or melodic contour",
+        "a stylistic and tonal context"
+      ],
+      "level": "advanced",
+      "mode": "generate",
+      "not_when": [
+        "when the sequence would obscure a required harmonic cadence"
+      ],
+      "ops": [],
+      "outputs": [
+        "contour observations",
+        "candidate developments or phrase plans"
+      ],
+      "preconditions": [
+        "the melodic material has identifiable boundaries or notes"
+      ],
+      "requires": [
+        "melodic-contour",
+        "modulation-common-tone"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "移調や反復による終止形成を設計する。",
+      "theory_refs": [
+        "Open Music Theory: sequences",
+        "Fux, Gradus ad Parnassum (public-domain edition)"
+      ],
+      "title": "Sequence Technique",
+      "use_when": [
+        "write a tonal sequence"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "species-counterpoint-1.md",
+      "body_sha256": "ccd41b46f312b2dea9443fa34085767f13d898bf31338ecb3efb1602ecf25325",
+      "category": "counterpoint",
+      "composes_with": [
+        "dissonance-treatment"
+      ],
+      "effects": [
+        "adds or evaluates independent lines while preserving the source material"
+      ],
+      "ensemble": [
+        "satb",
+        "voice"
+      ],
+      "examples": [
+        "A consonant upper line over a stepwise bass.",
+        "A cadence with a controlled imperfect interval."
+      ],
+      "failure_modes": [
+        "Creating parallel perfect intervals.",
+        "Treating a passing dissonance as stable."
+      ],
+      "id": "species-counterpoint-1",
+      "idiom": [
+        "common-practice",
+        "baroque"
+      ],
+      "inputs": [
+        "two or more independent voices",
+        "a fixed cantus or melodic line when applicable"
+      ],
+      "level": "advanced",
+      "mode": "generate",
+      "not_when": [
+        "when free chord texture is desired"
+      ],
+      "ops": [],
+      "outputs": [
+        "candidate voice lines or voice-leading decisions",
+        "a list of independence risks"
+      ],
+      "preconditions": [
+        "voice identities and time positions are clear"
+      ],
+      "requires": [
+        "pitch-intervals",
+        "voice-leading-rules"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "固定カントゥスに対して第一種対位法の候補を作る。",
+      "theory_refs": [
+        "Fux, Gradus ad Parnassum (public-domain edition)",
+        "Open Music Theory: species counterpoint"
+      ],
+      "title": "First Species Counterpoint",
+      "use_when": [
+        "write first species counterpoint above a cantus"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "string-double-stops.md",
+      "body_sha256": "a5c2ba3be117aca8b465fe01bd28ffeac1def1c84e8bb051f2e372635d392020",
+      "category": "playability",
+      "composes_with": [
+        "string-section-idioms"
+      ],
+      "effects": [
+        "protects human execution feasibility without changing musical intent automatically"
+      ],
+      "ensemble": [
+        "strings"
+      ],
+      "examples": [
+        "A playable open-string double stop.",
+        "A divisi alternative for a stretched position."
+      ],
+      "failure_modes": [
+        "A double stop that requires an impossible position shift.",
+        "A written interval that sounds clearer as divisi."
+      ],
+      "id": "string-double-stops",
+      "idiom": [
+        "common-practice",
+        "baroque",
+        "folk"
+      ],
+      "inputs": [
+        "an instrument-specific part",
+        "range, technique, endurance, and phrasing constraints"
+      ],
+      "level": "advanced",
+      "mode": "check",
+      "not_when": [
+        "when a part is a non-notational sketch with no string assignment"
+      ],
+      "ops": [],
+      "outputs": [
+        "feasibility findings",
+        "candidate simplifications or redirections"
+      ],
+      "preconditions": [
+        "the part and intended performer are identified"
+      ],
+      "requires": [],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "弦楽器のダブルストップと位置を検証する。",
+      "theory_refs": [
+        "Orchestration texts: string technique",
+        "MIDI 1.0 instrument and channel conventions"
+      ],
+      "title": "String Double Stops",
+      "use_when": [
+        "check string double stops and positions"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "string-section-idioms.md",
+      "body_sha256": "6062059df4a0895cade9ef660216bccdfde7dac1f8d78e17bd97c572819ff7aa",
+      "category": "orchestration",
+      "composes_with": [
+        "wind-pairing"
+      ],
+      "effects": [
+        "changes or evaluates timbre, balance, and ensemble texture"
+      ],
+      "ensemble": [
+        "strings"
+      ],
+      "examples": [
+        "A low-string pedal beneath a solo violin.",
+        "A divisi texture with a clear registral plan."
+      ],
+      "failure_modes": [
+        "Overloading one register with every section.",
+        "Ignoring bow or position feasibility in the part."
+      ],
+      "id": "string-section-idioms",
+      "idiom": [
+        "common-practice",
+        "baroque",
+        "film"
+      ],
+      "inputs": [
+        "instrument roster and roles",
+        "register, texture, and balance constraints"
+      ],
+      "level": "advanced",
+      "mode": "transform",
+      "not_when": [
+        "when the target ensemble has no string section"
+      ],
+      "ops": [],
+      "outputs": [
+        "instrumentation and texture choices",
+        "candidate part assignments"
+      ],
+      "preconditions": [
+        "available instruments and their ranges are known"
+      ],
+      "requires": [
+        "texture-density"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "弦楽器セクションの役割と音域配置を設計する。",
+      "theory_refs": [
+        "Orchestration texts: string technique",
+        "MIDI 1.0 instrument and channel conventions"
+      ],
+      "title": "String Section Idioms",
+      "use_when": [
+        "assign idiomatic string section roles"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "syllable-underlay-basics.md",
+      "body_sha256": "c77121b0bcd3683302951daa71d9dc0674e70144032c3c7746234572b9343804",
+      "category": "text_setting",
+      "composes_with": [
+        "melisma-vs-syllabic"
+      ],
+      "effects": [
+        "changes the relationship between text and musical time"
+      ],
+      "ensemble": [
+        "voice",
+        "mixed"
+      ],
+      "examples": [
+        "A word split across a phrase boundary.",
+        "A sustained vowel assigned to a melisma."
+      ],
+      "failure_modes": [
+        "A syllable assigned to a rest.",
+        "A melisma that hides the word boundary."
+      ],
+      "id": "syllable-underlay-basics",
+      "idiom": [
+        "common-practice",
+        "folk",
+        "film"
+      ],
+      "inputs": [
+        "lyrics or syllables",
+        "melodic rhythm, accents, and language context"
+      ],
+      "level": "intermediate",
+      "mode": "transform",
+      "not_when": [
+        "when lyrics are absent or the text is deliberately abstract"
+      ],
+      "ops": [],
+      "outputs": [
+        "syllable-to-note alignment",
+        "candidate underlay and melisma choices"
+      ],
+      "preconditions": [
+        "lyrics and note timing are available in a compatible form"
+      ],
+      "requires": [
+        "note-values",
+        "melodic-contour"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "歌詞の音節を音符へ自然に割り当てる。",
+      "theory_refs": [
+        "MusicXML lyrics and syllabic elements",
+        "Open Music Theory: text and melody"
+      ],
+      "title": "Syllable Underlay Basics",
+      "use_when": [
+        "align syllables to notes"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "syncopation-basics.md",
+      "body_sha256": "43460f2d1e4fb591c0cd3f418504977ea935b2db86a4e0e1e28ab606e7a0f889",
+      "category": "rhythm",
+      "composes_with": [
+        "rhythmic-variation"
+      ],
+      "effects": [
+        "changes or evaluates rhythmic placement while retaining meter and pulse"
+      ],
+      "ensemble": [
+        "mixed"
+      ],
+      "examples": [
+        "A backbeat accent over a steady quarter-note pulse.",
+        "A short off-beat figure that returns on the beat."
+      ],
+      "failure_modes": [
+        "Accenting every subdivision until the pulse disappears.",
+        "Calling a deliberate rest a syncopation without context."
+      ],
+      "id": "syncopation-basics",
+      "idiom": [
+        "common-practice",
+        "jazz",
+        "pop"
+      ],
+      "inputs": [
+        "meter, beat position, note values, or a rhythmic pattern",
+        "a pulse or dance context when relevant"
+      ],
+      "level": "intermediate",
+      "mode": "generate",
+      "not_when": [
+        "when a strict unison pulse must remain mechanically unchanged"
+      ],
+      "ops": [],
+      "outputs": [
+        "a rhythmic interpretation",
+        "candidate transformations that retain the source identity"
+      ],
+      "preconditions": [
+        "time positions and meter are known"
+      ],
+      "requires": [
+        "note-values",
+        "metric-hierarchy"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "拍を残したままシンコペーションを配置する。",
+      "theory_refs": [
+        "Open Music Theory: syncopation",
+        "MIDI 1.0 timing concepts"
+      ],
+      "title": "Syncopation Basics",
+      "use_when": [
+        "apply syncopation without losing pulse"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "texture-density.md",
+      "body_sha256": "2e5cbdac32ab120c5641da76aea94f6e01cb385d8aed25941a651df68b263ffe",
+      "category": "orchestration",
+      "composes_with": [
+        "piano-idiomatic-limits"
+      ],
+      "effects": [
+        "changes or evaluates timbre, balance, and ensemble texture"
+      ],
+      "ensemble": [
+        "mixed"
+      ],
+      "examples": [
+        "A dense tutti followed by a transparent solo response.",
+        "A three-layer texture with a clear principal line."
+      ],
+      "failure_modes": [
+        "A melody buried under sustained inner parts.",
+        "Counting parts without checking their roles."
+      ],
+      "id": "texture-density",
+      "idiom": [
+        "common-practice",
+        "jazz",
+        "film"
+      ],
+      "inputs": [
+        "instrument roster and roles",
+        "register, texture, and balance constraints"
+      ],
+      "level": "intermediate",
+      "mode": "check",
+      "not_when": [
+        "when only a reduction or sketch is available and instrumentation is unknown"
+      ],
+      "ops": [],
+      "outputs": [
+        "instrumentation and texture choices",
+        "candidate part assignments"
+      ],
+      "preconditions": [
+        "available instruments and their ranges are known"
+      ],
+      "requires": [
+        "string-section-idioms",
+        "wind-pairing"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "編曲の密度と透明感を時間ごとに評価する。",
+      "theory_refs": [
+        "Orchestration texts: texture and balance",
+        "MIDI 1.0 instrument and channel conventions"
+      ],
+      "title": "Texture Density",
+      "use_when": [
+        "check orchestration texture density"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "theme-and-variation.md",
+      "body_sha256": "7b77bccfd9345c7a337f34382f3e98ddcb637552efa710a967eab3bf993afb7b",
+      "category": "form",
+      "composes_with": [
+        "binary-ternary"
+      ],
+      "effects": [
+        "organizes or evaluates large-scale musical structure"
+      ],
+      "ensemble": [
+        "mixed"
+      ],
+      "examples": [
+        "A theme varied by rhythm, harmony, and register.",
+        "A final variation that transforms the theme."
+      ],
+      "failure_modes": [
+        "Producing unrelated miniatures under one theme label.",
+        "Letting every variation have identical pacing."
+      ],
+      "id": "theme-and-variation",
+      "idiom": [
+        "common-practice",
+        "baroque",
+        "film"
+      ],
+      "inputs": [
+        "a section map, phrase labels, or a formal hypothesis",
+        "harmonic and melodic landmarks"
+      ],
+      "level": "advanced",
+      "mode": "generate",
+      "not_when": [
+        "when the requested result is a through-composed narrative without a recurring theme"
+      ],
+      "ops": [],
+      "outputs": [
+        "formal labels and relationships",
+        "candidate section or transition plans"
+      ],
+      "preconditions": [
+        "the score has enough landmarks to compare sections"
+      ],
+      "requires": [
+        "phrase-arc",
+        "motive-development"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "テーマと変奏の関係を設計する。",
+      "theory_refs": [
+        "Open Music Theory: variation form",
+        "Schoenberg, Fundamentals of Musical Composition (library reference)"
+      ],
+      "title": "Theme and Variation Form",
+      "use_when": [
+        "design theme and variation form"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "voice-leading-rules.md",
+      "body_sha256": "e3d92e7f6b6aa17c74f2356df20331f07e2b0b90bd4ed14fed726f0791d3cf86",
+      "category": "counterpoint",
+      "composes_with": [
+        "parallel-motion-avoidance",
+        "satb-chorale-harmonization"
+      ],
+      "effects": [
+        "adds or evaluates independent lines while preserving the source material"
+      ],
+      "ensemble": [
+        "satb",
+        "voice"
+      ],
+      "examples": [
+        "A four-part cadence with contrary outer voices.",
+        "A texture with a brief crossing in an inner voice."
+      ],
+      "failure_modes": [
+        "Losing track of a voice through a rest.",
+        "Confusing a chord inversion with voice crossing."
+      ],
+      "id": "voice-leading-rules",
+      "idiom": [
+        "common-practice",
+        "baroque"
+      ],
+      "inputs": [
+        "two or more independent voices",
+        "a fixed cantus or melodic line when applicable"
+      ],
+      "level": "advanced",
+      "mode": "check",
+      "not_when": [
+        "when only a single melodic line exists"
+      ],
+      "ops": [],
+      "outputs": [
+        "candidate voice lines or voice-leading decisions",
+        "a list of independence risks"
+      ],
+      "preconditions": [
+        "voice identities and time positions are clear"
+      ],
+      "requires": [
+        "pitch-intervals",
+        "metric-hierarchy"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "和声的な声部移動の滑らかさと独立性を検査する。",
+      "theory_refs": [
+        "Open Music Theory: voice leading",
+        "Fux, Gradus ad Parnassum (public-domain edition)"
+      ],
+      "title": "Voice Leading Rules",
+      "use_when": [
+        "check voice leading between chord tones"
+      ],
+      "validators": []
+    },
+    {
+      "body_path": "wind-pairing.md",
+      "body_sha256": "938b2046204936488978a92365fc9763e318848c5c802c910521af47ee1a68c4",
+      "category": "orchestration",
+      "composes_with": [
+        "texture-density"
+      ],
+      "effects": [
+        "changes or evaluates timbre, balance, and ensemble texture"
+      ],
+      "ensemble": [
+        "winds",
+        "brass"
+      ],
+      "examples": [
+        "Flute and oboe color pairing around a clarinet line.",
+        "Low brass support under a horn melody."
+      ],
+      "failure_modes": [
+        "A blend that disappears at soft dynamics.",
+        "An exposed pairing that masks a principal line."
+      ],
+      "id": "wind-pairing",
+      "idiom": [
+        "common-practice",
+        "baroque",
+        "film"
+      ],
+      "inputs": [
+        "instrument roster and roles",
+        "register, texture, and balance constraints"
+      ],
+      "level": "advanced",
+      "mode": "transform",
+      "not_when": [
+        "when the score has no wind parts or range data"
+      ],
+      "ops": [],
+      "outputs": [
+        "instrumentation and texture choices",
+        "candidate part assignments"
+      ],
+      "preconditions": [
+        "available instruments and their ranges are known"
+      ],
+      "requires": [
+        "string-section-idioms"
+      ],
+      "schema_version": "1",
+      "status": "draft",
+      "summary_ja": "管楽器の組み合わせと音域配置を計画する。",
+      "theory_refs": [
+        "Orchestration texts: woodwind and brass pairing",
+        "MIDI 1.0 instrument and channel conventions"
+      ],
+      "title": "Wind Pairing",
+      "use_when": [
+        "pair wind instruments by blend and register"
+      ],
+      "validators": []
+    }
+  ]
+}

@@ -1,0 +1,423 @@
+name: mtdt-lite
+version: 0.1.0
+status: implemented
+status_note: >-
+  P1 skill shelf implemented and verified on 2026-09-25. P2 score model,
+  operation registry, and validators remain out of scope.
+source_draft: draft/mtdt-lite.md
+phase: P1
+goal: >-
+  Deliver the P1 skill shelf for mtdt-lite: 36 inspectable skill cards with a
+  canonical machine-readable index, a deterministic stdlib-only content
+  checker, and a metadata-only selection smoke. P1 is a skill shelf, NOT a
+  score engine: no score model, no op registry, no validator implementation.
+  The shelf gives a future controller (P2+) an inspectable, hash-pinned
+  catalog from which an LLM may pick 1-3 cards while deterministic
+  engine operations and validators do the rule enforcement.
+users:
+  - "repo operator: writes and maintains the 36 cards, runs the checker and fixtures"
+  - "opencode LLM lanes (future, P2+): read the compact index to select cards via a controller"
+  - "future external users (P3+): bring MusicXML/MIDI and receive inspectable analysis or candidate op IDs"
+clean_room: >-
+  Built from PUBLIC descriptions of mtdt only (Rust CLI with 300+ skills,
+  enumeration of legal candidates with LLM artistic selection, inspectability
+  over black-box). The real mtdt is closed/commercial: no access exists, no
+  skill text, card wording, or card structure is copied, and no compatibility
+  or parity with mtdt is claimed or implied. Only the public concepts
+  (shelf / selection / inspectability) are recombined clean-room.
+scope:
+  - "tools/mtdt-lite/skills/index.json — canonical machine-readable index (JSON chosen deliberately so P1 needs only the Python stdlib)"
+  - "36 skill card bodies skills/<id>.md, English Markdown, one card per file"
+  - "tools/mtdt-lite/check_shelf.py — deterministic checker, stdlib only, --check and --selection-fixture modes"
+  - "tools/mtdt-lite/tests/ — unittest suite plus tests/fixtures/selection_cases.json"
+  - "YAML is NOT required for the P1 index (stdlib json suffices; YAML would need a third-party parser)"
+  - "no MusicXML/MIDI parser is part of P1"
+out_of_scope:
+  - "score engine of any kind: JSON score model, op registry, validator implementations (P2)"
+  - "SATB chorale harmonization end-to-end slice (P3)"
+  - "MusicXML/MIDI import or export; any score file parsing or writing"
+  - "live LLM calls, network access, `opencode run` integration, new bridge lanes"
+  - "card status promotion beyond draft (validated/stable require an implemented engine)"
+  - "mtdt parity or compatibility (closed-source, no access)"
+  - "agent-check / CI gate integration for the checker (placement undecided)"
+  - "audio generation, mix/mastering, PDF engraving, LilyPond/MuseScore, Suno integration"
+inputs:
+  p1:
+    - "card body drafts: English Markdown, one file per card under skills/"
+    - "card metadata: the metadata_contract field set, authored per card into index.json"
+  future:
+    - "MusicXML / MIDI files (external interchange, P2+)"
+    - "internal canonical representation: a validated JSON score model (P2+)"
+outputs:
+  p1:
+    - "skills/index.json: 36 metadata records + schema_version + catalog_sha256"
+    - "36 card bodies skills/<id>.md"
+    - "check_shelf.py with --check and --selection-fixture"
+    - "tests/fixtures/selection_cases.json + unittest suite under tests/"
+  future:
+    - "analysis reports or lists of legal candidate op IDs (LLM output restricted to these, P2+)"
+    - "MusicXML / MIDI export (interchange, P2+)"
+file_layout:
+  root: tools/mtdt-lite
+  tree: >-
+    tools/mtdt-lite/
+      check_shelf.py
+      skills/
+        index.json
+        <id>.md            (36 files, one per card)
+      tests/
+        test_*.py          (unittest discovery pattern)
+        fixtures/
+          selection_cases.json
+  notes:
+    - "index.json lives inside skills/ and is the single canonical machine-readable index"
+    - "body_path values are relative to skills/ (e.g. 'pitch-intervals.md')"
+    - "JSON chosen deliberately for the P1 index: Python stdlib json is sufficient and keeps P1 third-party-free"
+    - "runtime artifacts (__pycache__/, *.pyc) under tools/mtdt-lite, e.g. produced by unittest discovery, are allowed and ignored as non-source; layout checks consider committed/source files only"
+seed_catalog:
+  total: 36
+  source: "draft/mtdt-lite.md seed table; the representative names there are finalized as the exact P1 seed IDs"
+  counts:
+    foundations: 4
+    counterpoint: 4
+    harmony: 5
+    melody: 4
+    rhythm: 3
+    form: 3
+    orchestration: 3
+    playability: 3
+    notation: 3
+    text_setting: 2
+    production_export: 2
+  by_category:
+    foundations:
+      - pitch-spelling-scales
+      - pitch-intervals
+      - key-signatures
+      - metric-hierarchy
+    counterpoint:
+      - species-counterpoint-1
+      - voice-leading-rules
+      - parallel-motion-avoidance
+      - dissonance-treatment
+    harmony:
+      - functional-harmony-basics
+      - cadence-types
+      - satb-chorale-harmonization
+      - secondary-dominants
+      - modulation-common-tone
+    melody:
+      - motive-development
+      - melodic-contour
+      - phrase-arc
+      - sequence-technique
+    rhythm:
+      - note-values
+      - syncopation-basics
+      - rhythmic-variation
+    form:
+      - period-sentence
+      - binary-ternary
+      - theme-and-variation
+    orchestration:
+      - string-section-idioms
+      - wind-pairing
+      - texture-density
+    playability:
+      - piano-idiomatic-limits
+      - string-double-stops
+      - breath-phrase-limits
+    notation:
+      - satb-closed-score
+      - clefs-and-transposing-instruments
+      - beaming-dynamics-conventions
+    text_setting:
+      - syllable-underlay-basics
+      - melisma-vs-syllabic
+    production_export:
+      - musicxml-roundtrip
+      - midi-export-basics
+metric_hierarchy_boundary: >-
+  `metric-hierarchy` (foundations) owns the SHARED metric vocabulary used
+  across categories: meter types, beat units and beat hierarchy, measure/bar
+  concepts, simple vs compound vs asymmetric meter. It defines vocabulary,
+  not techniques. `rhythm` owns APPLIED rhythmic techniques: note values
+  (`note-values`), syncopation (`syncopation-basics`), and rhythmic variation
+  (`rhythmic-variation`). Rhythm cards may reference the foundations
+  vocabulary via `requires: [metric-hierarchy]` but must not redefine it.
+index_schema:
+  top_level_keys: "exactly schema_version, catalog_sha256, skills — no generated_at, no timestamps, no other top-level keys"
+  skills: "id-sorted array of metadata records (metadata_contract.required_fields); sort key is the record id"
+  read_only: >-
+    P1 checker modes are read-only: --check and --selection-fixture validate
+    and report only; they never write, update, or re-serialize index.json or
+    any body file.
+metadata_contract:
+  location: "card metadata lives only as entries in skills/index.json; bodies carry prose, not metadata"
+  required_fields:
+    id: "string, kebab-case, unique across the catalog, equals the body filename stem"
+    title: "string, English, human-readable skill name"
+    summary_ja: "string, Japanese 1-2 sentence summary; the only Japanese text in the whole shelf, index-side only"
+    category: "enum, see enums.category"
+    mode: "enum, see enums.mode"
+    level: "enum, see enums.level"
+    idiom: "list of kebab-case tags, may be empty (= idiom-neutral), e.g. [common-practice]"
+    ensemble: "list of kebab-case tags, may be empty (= unspecified), e.g. [satb, piano]"
+    status: "enum, see enums.status; P1 forces draft"
+    use_when: "list of English trigger phrases (>= 1); matched as normalized substrings by the selection smoke"
+    not_when: "list of English negative trigger phrases, may be empty; a match excludes the card"
+    inputs: "list of strings describing expected inputs"
+    outputs: "list of strings describing produced outputs"
+    preconditions: "list of strings that must hold before applying the skill"
+    effects: "list of strings describing the state/output effect"
+    ops: "list of {id, implementation}; named engine operations this card relies on"
+    validators: "list of {id, severity, autofix, implementation}; severity enum, autofix boolean"
+    theory_refs: "list of public reference strings (title and/or URL); no closed-source mtdt content"
+    examples: "list of short example descriptions"
+    failure_modes: "list of known failure modes / mis-triggers"
+    requires: "list of skill IDs that should be applied or known first"
+    composes_with: "list of skill IDs that combine well with this card"
+    body_path: "string, '<id>.md', relative to skills/"
+    body_sha256: "64 lowercase hex chars, SHA-256 over the exact UTF-8 bytes of body_path"
+    schema_version: "string, index schema version the entry validates against (P1: '1')"
+  enums:
+    category: [foundations, counterpoint, harmony, melody, rhythm, form, orchestration, playability, notation, text_setting, production_export]
+    mode: [analyze, generate, check, transform]
+    level: [basic, intermediate, advanced]
+    status: [draft, validated, stable]
+    implementation: [unimplemented, advisory, implemented]
+    validator_severity: [info, warning, error]
+  p1_enum_locks:
+    - "status == draft for all 36 cards"
+    - "ops[].implementation == unimplemented for every op"
+    - "validators[].implementation in {unimplemented, advisory}; 'implemented' anywhere is a hard error"
+  id_rules:
+    - "kebab-case: '^[a-z0-9]+(-[a-z0-9]+)*$'"
+    - "unique across the catalog; body filename is '<id>.md'"
+    - "category names are fixed as listed (text_setting keeps its underscore); the kebab rule applies to card IDs only"
+  vocabulary_separation: >-
+    Engine vocabulary (op IDs, validator IDs, severity, autofix, implementation
+    status) lives only in index metadata. Card bodies discuss concepts in prose
+    but must not define new ops or validators; the future registry (P2) owns
+    the vocabulary, cards only reference it.
+p1_restrictions:
+  - "exactly 36 cards; no extras, no placeholders with other counts"
+  - "every card status is draft"
+  - "every op is explicitly implementation: unimplemented; every validator is explicitly unimplemented or advisory; 'implemented' never appears"
+  - "no live LLM call, no network access, no score model, no MusicXML/MIDI import/export, no engine calls anywhere in the P1 toolchain"
+  - "any missing or unsupported check fails visibly with a non-zero exit and a printed reason; no silent checks"
+card_body_contract:
+  language: "English Markdown; Japanese appears only in the index summary_ja"
+  encoding: "UTF-8 without BOM, LF line endings"
+  file: "skills/<id>.md, one card per file"
+  required_sections:
+    - "## Purpose"
+    - "## Use when"
+    - "## Do not use when"
+    - "## Inputs"
+    - "## Outputs"
+    - "## Procedure"
+    - "## Hard constraints"
+    - "## Heuristics"
+    - "## Validation status"
+    - "## Failure modes"
+    - "## Examples"
+    - "## References"
+  section_rules:
+    - "headings are exact, case-sensitive, H2 level, each present exactly once"
+    - "Hard constraints vs Heuristics: rules a future deterministic validator could enforce vs advisory judgment; the split must be explicit"
+    - "Validation status states, per referenced op/validator, its implementation status (unimplemented/advisory in P1); an unimplemented check must never be described as performed"
+    - "References cite public sources only; no copied closed-source mtdt text anywhere in the body"
+  language_check: >-
+    The checker rejects any body containing kana (U+3040-U+30FF) or CJK
+    ideographs (U+4E00-U+9FFF) as the automated proxy for 'English body'.
+checker_contract:
+  file: tools/mtdt-lite/check_shelf.py
+  runtime: "Python 3.10+ standard library only; no third-party packages, no network, no LLM; production checker code uses no subprocess"
+  paths:
+    root: >-
+      --root is REQUIRED and names the skills directory (e.g.
+      tools/mtdt-lite/skills) containing index.json and the body files; all
+      shelf validation resolves against it.
+    fixture: >-
+      --selection-fixture <path> resolves from the current working directory
+      (repo-root-relative in the documented commands).
+    self_scan: >-
+      The production self-scan resolves check_shelf.py from __file__, never
+      from --root; it scans production checker code only, not the skills
+      directory and not the whole tools tree.
+  modes:
+    - "--check: validate the shelf ONLY (index, bodies, self-scan — no fixture involvement), print reasons, exit per exit_codes; read-only"
+    - >-
+      --selection-fixture <path>: FIRST perform the full shelf check (same
+      rules as --check); if the shelf check fails, fixture parsing and
+      validation are SKIPPED and the shelf exit code is returned. Only when
+      the shelf passes are fixture cases checked: a missing or malformed
+      fixture file is exit 2, an expectation mismatch is exit 4; read-only
+  index_schema_check: >-
+    --check enforces the closed top-level index_schema: exactly schema_version,
+    catalog_sha256, skills; skills is an id-sorted array; any extra or missing
+    top-level key (e.g. generated_at) is exit 2.
+  canonical_serialization: >-
+    Canonical form is defined as json.dumps(index, sort_keys=True,
+    ensure_ascii=False, indent=2) plus one trailing newline, with the skills
+    array sorted by id. The checker verifies idempotence as an IN-MEMORY
+    canonical-byte comparison: it re-serializes the parsed index and compares
+    bytes against the file on disk; it never writes the index back.
+  hashing:
+    body_sha256: "SHA-256 over the exact UTF-8 bytes of the body file, no normalization of any kind"
+    catalog_sha256: >-
+      SHA-256 over the compact canonical JSON (sort_keys=True,
+      separators=(',',':'), ensure_ascii=False, UTF-8 encoded) of the list of
+      full card records sorted by id; recorded at the index top level and
+      recomputed on every --check.
+  checks:
+    - "index parses as JSON with schema_version '1'; every skills entry has exactly the contract fields (else exit 2)"
+    - "index top level is exactly {schema_version, catalog_sha256, skills} with skills id-sorted (else exit 2)"
+    - "every skills/<id>.md has an index entry and every entry has a body file (missing either: exit 2)"
+    - "no duplicate ids in the index or on the filesystem (exit 2)"
+    - "card count == 36 and per-category counts match seed_catalog.counts (else exit 4)"
+    - "all enums valid; ids kebab-case; body_path == '<id>.md' (else exit 2)"
+    - "body files decode as UTF-8, are BOM-free and LF-only (else exit 2)"
+    - "all required body sections present exactly once (else exit 2)"
+    - "body contains no kana/CJK ideographs (else exit 2)"
+    - "body_sha256 matches the body bytes and catalog_sha256 matches the recomputed catalog hash (else exit 3)"
+    - "every requires/composes_with entry resolves to an existing card id; requires must not self-reference (else exit 4)"
+    - "every op/validator referenced in card metadata is declared in that card's ops/validators with an explicit implementation status; an undeclared reference is unavailable (exit 4)"
+    - "no op/validator carries implementation 'implemented' (else exit 2)"
+    - >-
+      selection fixture (only in --selection-fixture mode, and only when the
+      shelf check passes — a failed shelf check skips fixture validation and
+      returns the shelf exit code): every case returns exactly expected_ids
+      under the matcher definition (else exit 4)
+    - >-
+      production self-scan: AST import scan of check_shelf.py only (resolved
+      from __file__), imports restricted to the stdlib allowlist below and no
+      banned network/process/LLM module (violation: exit 5); the skills
+      directory and the rest of the tools tree are NOT text-scanned
+  stdlib_allowlist:
+    modules: [argparse, ast, hashlib, json, pathlib, re, sys, unicodedata]
+    note: >-
+      The closed allowlist for production checker code. Importing anything
+      outside it in check_shelf.py is exit 5. asyncio is NOT needed and is
+      banned in the production checker if included; unittest/tempfile/os are
+      likewise outside the allowlist and banned there.
+  banned_modules:
+    production: >-
+      In check_shelf.py: any network module (socket, urllib, http, ftplib,
+      ssl, smtplib), any process module (subprocess, os.system, multiprocessing,
+      pty), any LLM/API client (openai, anthropic, requests, httpx), and
+      asyncio are banned — importing or invoking one is exit 5.
+    tests: >-
+      Unittest files may use subprocess SOLELY to invoke the local checker
+      (check_shelf.py) for exit-code tests; test code must not use network or
+      LLM modules, and must not invoke any remote endpoint.
+  fail_visibly: >-
+    Any check the toolchain cannot perform must abort non-zero with a printed
+    reason. Skipping a check silently is a spec violation.
+  exit_codes:
+    0: "pass"
+    1: "usage or internal error (bad CLI usage, unreadable self, unexpected exception)"
+    2: "schema / file / layout violation (parse error, missing or malformed fixture, missing file, bad enum or id, missing section, encoding violation, forbidden 'implemented' status)"
+    3: "hash drift (body_sha256 or catalog_sha256 mismatch)"
+    4: "count / dependency / selection-fixture failure (wrong card or category counts, unresolved requires/composes_with, unavailable op/validator, fixture expectation mismatch)"
+    5: "banned production external / network / LLM pattern (banned import or call detected in check_shelf.py)"
+  exit_precedence: >-
+    Deterministic precedence: when multiple violations exist, the FIRST
+    applicable category in the order 1, 2, 3, 4, 5 wins; a shelf with both a
+    schema violation and hash drift reports 2, not 3.
+selection_smoke:
+  purpose: >-
+    Deterministic shelf selection smoke over metadata only. It proves the
+    trigger metadata can select cards without an LLM. It is NOT the future
+    controller and makes no claim about real-task selection quality.
+  matcher:
+    input: "task text (English) plus optional mode and/or category filters"
+    normalization: "lowercase; collapse every non-alphanumeric run to a single space; strip"
+    scoring: "+1 per use_when phrase whose normalized form appears as a substring of the normalized task"
+    not_when: "any not_when phrase matching as a normalized substring hard-excludes the card"
+    filters: "if the query pins mode and/or category, cards with a different value are excluded"
+    ranking: "sort by (score desc, id asc); take the first top_k=3 cards with score >= 1; fewer positive-score cards yield a shorter list"
+    determinism: "no randomness, no clock, no network, no model; same input always yields the same list"
+  fixture:
+    path: tools/mtdt-lite/tests/fixtures/selection_cases.json
+    schema: "[{id, task, expected_ids, expected_mode, expected_category, rationale}]"
+    fields:
+      id: "kebab-case case id, unique within the fixture"
+      task: "English task text fed to the matcher"
+      expected_ids: "exact expected selection, order-sensitive, length <= 3"
+      expected_mode: "mode filter pinned by the case, or null"
+      expected_category: "category filter pinned by the case, or null"
+      rationale: "human-readable reason; not machine-checked"
+    minimum: ">= 12 cases; all 11 categories covered; at least one not_when exclusion case; at least one mode- or category-filtered case"
+commands:
+  check: "python3 tools/mtdt-lite/check_shelf.py --root tools/mtdt-lite/skills --check"
+  selection_fixture: "python3 tools/mtdt-lite/check_shelf.py --root tools/mtdt-lite/skills --selection-fixture tools/mtdt-lite/tests/fixtures/selection_cases.json"
+  unit_tests: 'python3 -m unittest discover -s tools/mtdt-lite/tests -p "test_*.py"'
+  notes:
+    - "Windows: `python` is equivalent where the py launcher is installed"
+    - "cargo is NOT required for P1; no Rust workspace file may change"
+    - "--root always names the skills directory; fixture paths resolve from the current working directory; the self-scan resolves check_shelf.py from __file__"
+acceptance:
+  - "this spec passes review BEFORE any P1 code is written"
+  - "tools/mtdt-lite/ contains exactly the P1 layout: check_shelf.py, skills/index.json, 36 skills/<id>.md bodies, tests/ with fixtures/selection_cases.json"
+  - "index.json: schema_version '1', exactly 36 entries, all enums valid, ids unique kebab-case, catalog_sha256 present"
+  - "all 36 card statuses are draft; zero ops/validators carry implementation 'implemented'"
+  - "check command exits 0 on the finished shelf; selection fixture command exits 0; unittest discovery exits 0"
+  - "negative tests demonstrate the exit-code mapping (1/2/3/4/5) with first-applicable-category precedence; the checker never exits 0 on a seeded violation"
+  - "no file under tools/mtdt-lite requests or stores API_SECRET or any credential; no network/LLM call exists in the P1 toolchain"
+  - "all files UTF-8 without BOM, LF"
+test_cases:
+  - "static schema/layout tests (specs/mtdt-lite.test.yaml: index-schema-valid, index-idempotent-rewrite, encoding-and-layout)"
+  - "exact catalog tests (specs/mtdt-lite.test.yaml: catalog-exact-36)"
+  - "body tests (bodies-language-and-sections, hash-integrity)"
+  - "restriction tests (no-implemented-checks, no-llm-no-network-stdlib-only)"
+  - "selection tests (selection-fixture-passes, selection-fixture-coverage)"
+  - "dependency tests (dependency-references-resolve, op-validator-availability)"
+  - "checker behavior (checker-exit-code-mapping)"
+  - "manual review cases (specs/mtdt-lite.test.yaml: category-boundary-metric-hierarchy, public-references-review)"
+dependencies:
+  - "draft/mtdt-lite.md approved (P0 done); taxonomy override mtdt-lite: topic: agent-infra in place"
+  - "this spec reviewed and approved before P1 implementation starts"
+  - "Python 3.10+ available as python3 (Windows: python); stdlib only"
+  - "no Cargo/Rust, no bridge, no userscript, no AGENTS/README changes"
+implementation_boundary: >-
+  P1 delivers ONLY the skill shelf: 36 card bodies, index.json, check_shelf.py,
+  the selection fixture and unittests. No score model, no op registry, no
+  validator implementation, no MusicXML/MIDI code, no CLI beyond the checker
+  flags, no controller, no LLM invocation. P2 owns the JSON score model schema,
+  the named op registry and real validators (card status may then move
+  draft -> validated -> stable). P3 owns the SATB chorale harmonization
+  end-to-end slice (harmony + counterpoint + notation, >= 3 validators).
+  P4 is demand-driven card growth.
+promotion:
+  review_gate: >-
+    This spec must pass review before P1 code starts (draft promotion gate
+    condition 2). P1 implementation begins only after operator approval of
+    this file.
+  p1_done: "all acceptance criteria green: shelf complete, check + fixture + unittest commands exit 0, negative tests demonstrate the exit-code mapping"
+  p1_to_p2: "P2 adds the score JSON schema, op registry and validator implementations under tools/mtdt-lite/; validated status requires referenced ops/validators implemented plus selection smoke passing; stable requires no observed mis-trigger/mis-apply in real use"
+  p2_to_p3: "P3 runs the SATB end-to-end slice: harmony + counterpoint + notation with >= 3 real validators (e.g. parallel fifths/octaves, voice range, voice crossing/spacing)"
+  p4: "demand-driven card growth beyond the 36 seed cards; no catalog-completionism"
+unknowns:
+  - "exact future score JSON and op schemas (P2; P1 metadata must not hard-code engine shapes)"
+  - "MusicXML round-trip fidelity (what load->canonical->write loses)"
+  - "validator severity/override semantics and autofix boundaries (P1 stores them as inert metadata)"
+  - "Go quota/cost per selection and revise turn (P1 is LLM-free, no exposure)"
+  - "text_setting scope: syllable underlay only vs per-language rules"
+  - "reference/copyright policy for theory_refs (P1 cites public sources only)"
+  - "checker gate placement (agent-check integration undecided; P1 runs it manually via the documented commands)"
+  - "live-model selection stability (deterministic fixture smoke is the P1 substitute; live tests deferred)"
+risks:
+  - "index/body drift: mitigated by body_sha256 + catalog_sha256 and the in-memory canonical-byte comparison"
+  - "checker bugs masking violations: mitigated by negative tests seeding each exit code"
+  - "selection matcher too naive for real tasks: accepted; it is a smoke, the controller is P2 scope"
+  - "category enum rigidity: accepted for P1; growth is demand-driven from P4 with the same enum"
+constraints:
+  - "no silent checks: unimplemented ops/validators are labeled as such everywhere they appear"
+  - "P1 completes with zero LLM calls; deterministic tests never depend on a live model"
+  - "no API_SECRET or any credential in any tools/mtdt-lite file"
+  - "stdlib-only Python; no third-party packages (this is why the index is JSON, not YAML)"
+  - "UTF-8 without BOM, LF everywhere under tools/mtdt-lite"
+  - "the 36 seed cards are the fixed P1 set; growth is demand-driven and out of P1 scope"
+  - "PowerShell nested-quote ban applies to any manual verification (repo rule)"

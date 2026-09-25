@@ -1,0 +1,151 @@
+feature: mtdt-lite
+source_spec: specs/mtdt-lite.yaml
+phase: P1
+status: implemented
+notes: >-
+  P1 tests were executed on 2026-09-25 after the shelf, checker, and fixture
+  were implemented. The commands below passed; manual review cases remain
+  operator checks rather than automated assertions.
+fixture_path: tools/mtdt-lite/tests/fixtures/selection_cases.json
+commands:
+  check: "python3 tools/mtdt-lite/check_shelf.py --root tools/mtdt-lite/skills --check"
+  selection_fixture: "python3 tools/mtdt-lite/check_shelf.py --root tools/mtdt-lite/skills --selection-fixture tools/mtdt-lite/tests/fixtures/selection_cases.json"
+  unit_tests: 'python3 -m unittest discover -s tools/mtdt-lite/tests -p "test_*.py"'
+tests:
+  - name: index-schema-valid
+    kind: static
+    target: tools/mtdt-lite/skills/index.json
+    expect: >-
+      parses as JSON; top level is exactly {schema_version, catalog_sha256,
+      skills} with no generated_at or other keys; schema_version == '1';
+      skills is an id-sorted array of exactly 36 records; every record has
+      exactly the metadata_contract fields; enums (category/mode/level/
+      status/implementation/severity) valid; ids unique kebab-case;
+      body_path == '<id>.md'; catalog_sha256 present and 64 hex chars
+  - name: index-idempotent-rewrite
+    kind: static
+    target: tools/mtdt-lite/skills/index.json
+    expect: >-
+      re-serializing the parsed index IN MEMORY with the canonical
+      serialization (sort_keys, ensure_ascii=False, indent=2, trailing
+      newline, skills sorted by id) is byte-identical to the file on disk;
+      the checker performs this comparison read-only and never writes or
+      updates the index
+  - name: catalog-exact-36
+    kind: static
+    target: tools/mtdt-lite/skills/index.json
+    expect: >-
+      exactly the 36 seed IDs of specs/mtdt-lite.yaml seed_catalog.by_category,
+      per-category counts foundations 4 / counterpoint 4 / harmony 5 / melody 4
+      / rhythm 3 / form 3 / orchestration 3 / playability 3 / notation 3 /
+      text_setting 2 / production_export 2, total 36
+  - name: category-boundary-metric-hierarchy
+    kind: manual
+    target: tools/mtdt-lite/skills/metric-hierarchy.md + rhythm card bodies
+    expect: >-
+      operator review: metric-hierarchy is categorized foundations and defines
+      shared metric vocabulary only (meter types, beat units/hierarchy, measure
+      concepts, simple vs compound vs asymmetric meter), not applied
+      techniques; note-values / syncopation-basics / rhythmic-variation own the
+      applied techniques and reference the vocabulary without redefining it;
+      machine-verifiable category placement is already covered by
+      catalog-exact-36
+  - name: bodies-language-and-sections
+    kind: static
+    target: tools/mtdt-lite/skills/*.md
+    expect: >-
+      MACHINE checks: all 36 bodies exist, decode as UTF-8 without BOM,
+      LF-only; contain no kana (U+3040-U+30FF) or CJK ideographs
+      (U+4E00-U+9FFF); contain each of the 12 required H2 sections exactly
+      once (Purpose / Use when / Do not use when / Inputs / Outputs /
+      Procedure / Hard constraints / Heuristics / Validation status / Failure
+      modes / Examples / References). Reference quality is reviewed manually
+      (public-references-review), not machine-checked
+  - name: hash-integrity
+    kind: static
+    target: tools/mtdt-lite/skills/
+    expect: >-
+      every body_sha256 equals SHA-256 of the exact UTF-8 bytes of its body
+      file; catalog_sha256 equals the recomputed canonical catalog hash; any
+      single-byte body edit flips the stored hash and makes --check exit 3
+  - name: no-implemented-checks
+    kind: static
+    target: tools/mtdt-lite/skills/index.json
+    expect: >-
+      all 36 statuses are draft; every op implementation is unimplemented;
+      every validator implementation is unimplemented or advisory; the string
+      'implemented' never appears as an implementation value
+  - name: no-llm-no-network-stdlib-only
+    kind: static
+    target: "tools/mtdt-lite/check_shelf.py + tools/mtdt-lite/tests/test_*.py"
+    expect: >-
+      PRODUCTION file: AST import scan of check_shelf.py resolved from
+      __file__ (not --root, not a whole-tree text scan); imports within the
+      closed allowlist [argparse, ast, hashlib, json, pathlib, re, sys,
+      unicodedata]; socket/urllib/http/subprocess/asyncio/requests banned;
+      no LLM/model/API_SECRET strings; seeded violation exits 5. TEST files
+      (test_*.py): AST check rejects network/LLM modules (socket, urllib,
+      http, requests, openai, anthropic, ...) and any remote endpoint usage;
+      stdlib imports are allowed, including subprocess SOLELY to invoke the
+      local check_shelf.py for exit-code tests; test files are exempt from
+      the checker's own self-scan
+  - name: selection-fixture-passes
+    kind: deterministic
+    target: tools/mtdt-lite/tests/fixtures/selection_cases.json
+    expect: >-
+      the --selection-fixture command FIRST performs the full shelf check; if
+      the shelf check fails, fixture parsing/validation is skipped and the
+      shelf exit code is returned. Only when the shelf passes are fixture
+      cases checked: every case returns exactly expected_ids (order-sensitive)
+      under the specs/mtdt-lite.yaml selection_smoke.matcher (normalized
+      substring scoring, not_when hard-exclusion, mode/category filters,
+      top_k=3, score>=1, tie-break id asc); command exits 0 only when both
+      pass; missing/malformed fixture exits 2, expectation mismatch exits 4
+  - name: selection-fixture-coverage
+    kind: static
+    target: tools/mtdt-lite/tests/fixtures/selection_cases.json
+    expect: >-
+      >= 12 cases with unique kebab-case ids; all 11 categories covered;
+      at least one not_when exclusion case; at least one mode- or
+      category-filtered case; rationale present in every case
+  - name: dependency-references-resolve
+    kind: static
+    target: tools/mtdt-lite/skills/index.json
+    expect: >-
+      every requires/composes_with entry resolves to an existing card id;
+      requires never self-references; unresolved reference exits 4
+  - name: op-validator-availability
+    kind: static
+    target: tools/mtdt-lite/skills/index.json
+    expect: >-
+      every op/validator referenced in card metadata is declared in that
+      card's ops/validators with an explicit implementation status
+      (unimplemented/advisory); an undeclared reference is unavailable and
+      exits 4
+  - name: checker-exit-code-mapping
+    kind: deterministic
+    target: tools/mtdt-lite/check_shelf.py
+    expect: >-
+      seeded violations map to the documented codes with first-applicable-
+      category-wins precedence: usage/internal error -> 1, schema/file/layout/
+      body/encoding (incl. missing or malformed fixture) -> 2, hash drift ->
+      3, count/dependency/selection mismatch -> 4, banned production
+      external/network/LLM pattern -> 5; clean shelf -> 0; in
+      --selection-fixture mode a failed shelf check returns the shelf exit
+      code and skips fixture validation; the checker never
+      exits 0 on a seeded violation
+  - name: encoding-and-layout
+    kind: static
+    target: tools/mtdt-lite/
+    expect: >-
+      all COMMITTED/SOURCE files UTF-8 without BOM, LF; source layout is
+      exactly check_shelf.py + skills/index.json + 36 skills/<id>.md + tests/
+      with fixtures/selection_cases.json and no extra source files; runtime
+      artifacts (__pycache__/, *.pyc) are allowed and ignored as non-source
+  - name: public-references-review
+    kind: manual
+    target: tools/mtdt-lite/skills/*.md (References sections)
+    expect: >-
+      operator review: every References section cites public sources only;
+      no closed-source mtdt text, wording, or card structure is copied; no
+      parity or compatibility claim appears

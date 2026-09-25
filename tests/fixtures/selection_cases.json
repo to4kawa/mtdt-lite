@@ -1,0 +1,130 @@
+[
+  {
+    "id": "category-foundations",
+    "task": "analyze pitch intervals",
+    "expected_ids": [
+      "pitch-intervals"
+    ],
+    "expected_mode": "analyze",
+    "expected_category": "foundations",
+    "rationale": "category coverage for foundations"
+  },
+  {
+    "id": "category-counterpoint",
+    "task": "write first species counterpoint above a cantus",
+    "expected_ids": [
+      "species-counterpoint-1"
+    ],
+    "expected_mode": "generate",
+    "expected_category": "counterpoint",
+    "rationale": "category coverage for counterpoint"
+  },
+  {
+    "id": "category-harmony",
+    "task": "choose a cadence for a harmonic phrase",
+    "expected_ids": [
+      "cadence-types"
+    ],
+    "expected_mode": "generate",
+    "expected_category": "harmony",
+    "rationale": "category coverage for harmony"
+  },
+  {
+    "id": "category-melody",
+    "task": "analyze melodic contour and interval direction",
+    "expected_ids": [
+      "melodic-contour"
+    ],
+    "expected_mode": "analyze",
+    "expected_category": "melody",
+    "rationale": "category coverage for melody"
+  },
+  {
+    "id": "category-rhythm",
+    "task": "identify note values and metric placement",
+    "expected_ids": [
+      "note-values"
+    ],
+    "expected_mode": "analyze",
+    "expected_category": "rhythm",
+    "rationale": "category coverage for rhythm"
+  },
+  {
+    "id": "category-form",
+    "task": "analyze a period or sentence phrase",
+    "expected_ids": [
+      "period-sentence"
+    ],
+    "expected_mode": "analyze",
+    "expected_category": "form",
+    "rationale": "category coverage for form"
+  },
+  {
+    "id": "category-orchestration",
+    "task": "assign idiomatic string section roles",
+    "expected_ids": [
+      "string-section-idioms"
+    ],
+    "expected_mode": "transform",
+    "expected_category": "orchestration",
+    "rationale": "category coverage for orchestration"
+  },
+  {
+    "id": "category-playability",
+    "task": "check whether piano writing is physically playable",
+    "expected_ids": [
+      "piano-idiomatic-limits"
+    ],
+    "expected_mode": "check",
+    "expected_category": "playability",
+    "rationale": "category coverage for playability"
+  },
+  {
+    "id": "category-notation",
+    "task": "notate a SATB closed score",
+    "expected_ids": [
+      "satb-closed-score"
+    ],
+    "expected_mode": "generate",
+    "expected_category": "notation",
+    "rationale": "category coverage for notation"
+  },
+  {
+    "id": "category-text-setting",
+    "task": "align syllables to notes",
+    "expected_ids": [
+      "syllable-underlay-basics"
+    ],
+    "expected_mode": "transform",
+    "expected_category": "text_setting",
+    "rationale": "category coverage for text_setting"
+  },
+  {
+    "id": "category-production-export",
+    "task": "validate a MusicXML roundtrip",
+    "expected_ids": [
+      "musicxml-roundtrip"
+    ],
+    "expected_mode": "check",
+    "expected_category": "production_export",
+    "rationale": "category coverage for production_export"
+  },
+  {
+    "id": "exclusion-cadence-checker",
+    "task": "choose a cadence for a harmonic phrase; this is for analysis-only requests that do not request a cadence",
+    "expected_ids": [],
+    "expected_mode": "generate",
+    "expected_category": "harmony",
+    "rationale": "real not_when exclusion: cadence-types matches use_when but is excluded by not_when"
+  },
+  {
+    "id": "additional-motive",
+    "task": "develop a motive by sequence and imitation",
+    "expected_ids": [
+      "motive-development"
+    ],
+    "expected_mode": "generate",
+    "expected_category": "melody",
+    "rationale": "additional motive-development selection case"
+  }
+]
