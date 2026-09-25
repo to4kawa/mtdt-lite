@@ -1,14 +1,15 @@
 feature: mtdt-lite
 source_spec: docs/spec-p2.yaml
 phase: P2
-status: draft
+status: implemented
 notes: >-
-  P2 test plan, written before implementation together with docs/spec-p2.yaml.
-  The RAT fixtures (rat-score-fixtures) carry pre-registered expectations from
-  docs/draft-p2.md; if any of them fails, the score schema is amended BEFORE
-  implementation continues, never the expectations after the fact. Commands
-  below are run from the repository root; the AGENTS.md gate adds
-  `git diff --check`.
+  P2 tests were executed on 2026-09-25 after implementation: the RAT fixtures
+  matched their pre-registered expectations exactly, the full suite ran 60
+  tests OK, and the four AGENTS.md gate commands exited 0. The RAT fixtures
+  carry pre-registered expectations from docs/draft-p2.md; if any of them had
+  failed, the score schema was to be amended BEFORE implementation continued,
+  never the expectations after the fact. Commands below run from the
+  repository root; the AGENTS.md gate adds `git diff --check`.
 fixture_path: tests/fixtures/selection_cases.json
 score_fixtures: tests/fixtures/scores/
 commands:

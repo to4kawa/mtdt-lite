@@ -1,10 +1,12 @@
 name: mtdt-lite
 version: 0.2.0
-status: draft
+status: implemented
 status_note: >-
-  P2 spec written before implementation. Operator approval of this file is
-  the P2 promotion gate (docs/draft-p2.md). Once implemented, status flips
-  to implemented together with docs/report-p2.md.
+  P2 implemented and verified on 2026-09-25: RAT 5/5 matched the
+  pre-registered table, all acceptance criteria green (60 unittests, four
+  AGENTS.md gate commands exit 0), report in docs/report-p2.md. Cards remain
+  draft/unwired; counterpoint validators and MusicXML/MIDI stay out of scope
+  (P3+).
 source_draft: docs/draft-p2.md
 phase: P2
 goal: >-

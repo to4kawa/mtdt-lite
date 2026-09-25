@@ -1,7 +1,7 @@
 # Draft P2: score JSON model, op registry, mechanical validators, CLI
 
 日付: 2026-09-25
-状態: 設計（P1 実装済みの上での P2 設計）
+状態: 完了（P2 実装済み。設計内容は下記のまま、実績は `docs/report-p2.md`）
 種別: 機能設計
 出典: `docs/draft.md`（P0）、`docs/spec.yaml`（P1 implemented）、`AGENTS.md`
 
