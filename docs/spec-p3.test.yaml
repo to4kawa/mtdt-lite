@@ -1,0 +1,69 @@
+schema_version: '1'
+status: implemented
+feature: p3-satb-slice-tests
+note: Each case maps to an assertion in tests/test_slice.py unless noted.
+
+cases:
+  - id: plan-good
+    run: parse tests/fixtures/plans/satb-chord-plan.json
+    expect: 'Plan key C major, slots {1:I, 2:vi, 3:IV, 4:V}'
+  - id: plan-extra-key
+    run: parse plan dict plus unknown top key
+    expect: "PlanError containing 'exactly the keys'"
+  - id: plan-bad-chord
+    run: parse plan with chord 'Imaj7'
+    expect: "PlanError containing 'unknown chord'"
+  - id: plan-minor-rejected
+    run: parse plan with mode minor
+    expect: "PlanError containing 'minor keys not supported in P3'"
+  - id: plan-dup-measure
+    run: parse plan with two slots on measure 2
+    expect: "PlanError containing 'duplicate'"
+  - id: rat-voicing
+    run: fill_voices(skeleton, plan)
+    expect: 'alto [G3, A3, A3, B3], tenor [C3, C3, C3, G3]'
+  - id: rat-validate-clean
+    run: mtdt.py validate on the filled score
+    expect: 'exit 0, stdout []'
+  - id: voice-fill-cli
+    run: mtdt.py voice-fill skeleton plan
+    expect: 'exit 0; payload keys exactly {findings, score}; score parts alto/tenor match rat-voicing'
+  - id: voice-fill-out
+    run: mtdt.py voice-fill skeleton plan --out TEMP file
+    expect: 'exit 0; file bytes equal stdout payload of voice-fill-cli (modulo formatting: compare parsed JSON)'
+  - id: voice-fill-bad-plan
+    run: mtdt.py voice-fill skeleton plan-with-bad-chord
+    expect: exit 2
+  - id: voice-fill-prefilled
+    run: mtdt.py voice-fill on a score whose alto holds a pitched note
+    expect: exit 1
+  - id: ops-voice-fill-needs-plan
+    run: mtdt.py ops voice-fill skeleton (no --plan)
+    expect: exit 2
+  - id: ops-voice-fill-with-plan
+    run: mtdt.py ops voice-fill skeleton --plan plan
+    expect: exit 0
+  - id: parallel-adversarial
+    run: mtdt.py validate scores/satb-parallel.json
+    expect: 'exit 3; exactly [(parallel-perfect, None, error, 2)]; message contains soprano/alto parallel fifths'
+  - id: crossing-adversarial
+    run: mtdt.py validate scores/satb-crossing.json
+    expect: 'exit 3; exactly [(voice-crossing, None, error, 1)]; message contains soprano/alto'
+  - id: contrary-legal
+    run: mtdt.py validate scores/satb-contrary.json
+    expect: 'exit 0, stdout []'
+  - id: lifecycle-exact
+    run: inspect skills/index.json (test_check_shelf.py)
+    expect: 'validated ids exactly {parallel-motion-avoidance, voice-leading-rules, satb-chorale-harmonization}; 33 others draft; validated cards carry the spec wiring declarations'
+  - id: code-linkage
+    run: tests/test_slice.py CardWiringTests
+    expect: 'every validated card item id is registered in engine with implementation implemented; registry bidirectional sync green'
+  - id: updater-typo-guard
+    run: update_index --card pitch-intervals --add-validator bogus-id --implementation implemented
+    expect: 'exit 2, index bytes unchanged'
+  - id: updater-implemented-accepted
+    run: update_index --card pitch-intervals --add-validator voice-range --implementation implemented (temp copy)
+    expect: 'exit 0 dry-run (lock rewritten, not weakened)'
+  - id: live-smoke-gated
+    run: tests/test_slice_live.py without RUN_LIVE_LLM
+    expect: 'skipped, suite exit 0'

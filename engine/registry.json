@@ -15,6 +15,11 @@
       "id": "score-validate",
       "implementation": "implemented",
       "summary": "Read a score file and run every registered mechanical validator, returning the findings list."
+    },
+    {
+      "id": "voice-fill",
+      "implementation": "implemented",
+      "summary": "Fill alto and tenor rests of an SATB skeleton from a discrete chord plan with a deterministic backtracking voicer, then validate the result."
     }
   ],
   "validators": [
@@ -31,6 +36,20 @@
       "autofix": false,
       "implementation": "implemented",
       "summary": "Events within a part must not overlap in time or duplicate an earlier event."
+    },
+    {
+      "id": "parallel-perfect",
+      "severity": "error",
+      "autofix": false,
+      "implementation": "implemented",
+      "summary": "No pair of voices may move in similar motion from one perfect fifth, octave, or unison to another; contrary and oblique motion stay legal."
+    },
+    {
+      "id": "voice-crossing",
+      "severity": "error",
+      "autofix": false,
+      "implementation": "implemented",
+      "summary": "Adjacent voices in score order must keep their vertical order at every sounding time; unisons are legal."
     },
     {
       "id": "voice-range",

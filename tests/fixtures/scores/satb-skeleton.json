@@ -1,0 +1,52 @@
+{
+  "schema_version": "1",
+  "title": "SATB slice skeleton",
+  "meter": {"numerator": 4, "denominator": 4},
+  "key": {"tonic": "C", "mode": "major"},
+  "parts": [
+    {
+      "id": "soprano",
+      "name": "Soprano",
+      "range": {"low": "C4", "high": "G5"},
+      "events": [
+        {"measure": 1, "onset": 0, "duration": 1, "pitch": "E4"},
+        {"measure": 2, "onset": 0, "duration": 1, "pitch": "E4"},
+        {"measure": 3, "onset": 0, "duration": 1, "pitch": "F4"},
+        {"measure": 4, "onset": 0, "duration": 1, "pitch": "D4"}
+      ]
+    },
+    {
+      "id": "alto",
+      "name": "Alto",
+      "range": {"low": "G3", "high": "C5"},
+      "events": [
+        {"measure": 1, "onset": 0, "duration": 1, "pitch": null},
+        {"measure": 2, "onset": 0, "duration": 1, "pitch": null},
+        {"measure": 3, "onset": 0, "duration": 1, "pitch": null},
+        {"measure": 4, "onset": 0, "duration": 1, "pitch": null}
+      ]
+    },
+    {
+      "id": "tenor",
+      "name": "Tenor",
+      "range": {"low": "C3", "high": "G4"},
+      "events": [
+        {"measure": 1, "onset": 0, "duration": 1, "pitch": null},
+        {"measure": 2, "onset": 0, "duration": 1, "pitch": null},
+        {"measure": 3, "onset": 0, "duration": 1, "pitch": null},
+        {"measure": 4, "onset": 0, "duration": 1, "pitch": null}
+      ]
+    },
+    {
+      "id": "bass",
+      "name": "Bass",
+      "range": {"low": "E2", "high": "C4"},
+      "events": [
+        {"measure": 1, "onset": 0, "duration": 1, "pitch": "C3"},
+        {"measure": 2, "onset": 0, "duration": 1, "pitch": "A2"},
+        {"measure": 3, "onset": 0, "duration": 1, "pitch": "F2"},
+        {"measure": 4, "onset": 0, "duration": 1, "pitch": "G2"}
+      ]
+    }
+  ]
+}

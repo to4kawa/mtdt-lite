@@ -2,6 +2,8 @@ import sys
 from pathlib import Path
 
 import check_shelf
+from engine import registry as registry_module
+from engine.registry import RegistryError
 
 
 class Refused(Exception):
@@ -11,6 +13,16 @@ class Refused(Exception):
 def semantic_error(message):
     print(f'2: {message}', file=sys.stderr)
     return 2
+
+
+def require_registered(kind, item_id):
+    try:
+        data = registry_module.load()
+    except RegistryError as exc:
+        raise Refused(f'cannot verify {kind} {item_id}: {exc}')
+    entries = data['ops'] if kind == 'op' else data['validators']
+    if item_id not in {entry['id'] for entry in entries}:
+        raise Refused(f'unknown {kind} id: {item_id} (not in the engine registry)')
 
 
 def apply_action(index, args, root):
@@ -28,10 +40,15 @@ def apply_action(index, args, root):
             break
     if card is None:
         raise Refused(f'unknown card id: {args.card}')
+    if args.status is not None:
+        card['status'] = args.status
+        return f"set status {args.status} for {args.card}"
     if args.add_op is not None:
         if any(op['id'] == args.add_op for op in card['ops']):
             raise Refused(f'card {args.card} already declares op {args.add_op}')
         implementation = args.implementation or 'unimplemented'
+        if implementation == 'implemented':
+            require_registered('op', args.add_op)
         card['ops'].append({'id': args.add_op, 'implementation': implementation})
         return f'add op {args.add_op} ({implementation}) to {args.card}'
     if args.remove_op is not None:
@@ -44,6 +61,8 @@ def apply_action(index, args, root):
         if any(validator['id'] == args.add_validator for validator in card['validators']):
             raise Refused(f'card {args.card} already declares validator {args.add_validator}')
         implementation = args.implementation or 'unimplemented'
+        if implementation == 'implemented':
+            require_registered('validator', args.add_validator)
         card['validators'].append({
             'id': args.add_validator,
             'severity': args.severity,
@@ -60,12 +79,12 @@ def apply_action(index, args, root):
 
 def run(args):
     actions = [
-        name for name in ('add_op', 'remove_op', 'add_validator', 'remove_validator')
+        name for name in ('add_op', 'remove_op', 'add_validator', 'remove_validator', 'status')
         if getattr(args, name) is not None
     ]
     if len(actions) > 1:
         return semantic_error(
-            'choose at most one of --add-op, --remove-op, --add-validator, --remove-validator')
+            'choose at most one of --add-op, --remove-op, --add-validator, --remove-validator, --status')
     if args.rehash and actions:
         return semantic_error('--rehash cannot be combined with card actions')
     if actions and not args.card:
@@ -123,6 +142,7 @@ def main(argv=None):
     parser.add_argument('--remove-op')
     parser.add_argument('--add-validator')
     parser.add_argument('--remove-validator')
+    parser.add_argument('--status', choices=['draft', 'validated'])
     parser.add_argument('--implementation')
     parser.add_argument('--severity', default='error', choices=sorted(check_shelf.SEVERITIES))
     parser.add_argument('--autofix', default='false', choices=['true', 'false'])

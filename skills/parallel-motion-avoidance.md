@@ -40,7 +40,7 @@ Find parallel perfect intervals and related independence failures.
 
 ## Validation status
 
-P1 has no implemented engine validator for this card. Treat every result as advisory until P2 provides named operations and validators; do not describe an unimplemented check as performed.
+P3 wires this card to the deterministic engine: validator `parallel-perfect` (implemented, v0.3.0) checks every voice pair across adjacent sonorities and reports similar-motion consecutive perfect fifths, octaves, and unisons with voice-pair evidence. Contrary and oblique motion stay legal. Do not describe any other check as performed.
 
 ## Failure modes
 

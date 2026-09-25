@@ -1,0 +1,160 @@
+schema_version: '1'
+status: implemented
+feature: p3-satb-slice
+goal: >
+  First end-to-end slice: a 4-bar SATB skeleton (soprano+bass fixed) plus a discrete
+  chord plan feeds a deterministic backtracking voicer that writes alto/tenor;
+  two new mechanical validators (parallel-perfect, voice-crossing) plus the three
+  P2 validators judge the result; three cards promote to validated; the P1
+  implemented-lock is relaxed by this spec (first authorized change).
+
+decisions:
+  - id: arch-A
+    choice: >
+      LLM emits only a discrete chord plan; notes come from the deterministic
+      voicer (Perplexity consult 2026-09-25; P0 principle 5 preserved).
+  - id: finding-shape-frozen
+    choice: >
+      Finding keeps the exact 5 keys {validator, severity, part, measure, message}.
+      Pair findings (parallel-perfect, voice-crossing) use part=null and carry the
+      voice-pair evidence in message (parallel-motion-avoidance Hard constraints).
+  - id: op-signature
+    choice: >
+      All OPS_IMPL callables take (score_path, extra=None). voice-fill raises
+      ScoreError when extra (plan path) is missing. mtdt.py ops gains --plan.
+  - id: validated-rule
+    choice: >
+      status validated is allowed iff the card declares >=1 op/validator and every
+      declared item has implementation implemented. check_shelf enforces the metadata
+      side only (no engine import; stdlib-only checker preserved); code linkage
+      (declared id registered AND implemented in engine) is enforced by a new
+      mechanical test. status stable stays forbidden. 36 cards unchanged.
+  - id: plan-error-is-score-error
+    choice: >
+      PlanError subclasses ScoreError, so plan schema violations exit 2 on both
+      the voice-fill subcommand and the ops path. VoicerError (no solution, bad
+      skeleton) is a plain Exception and exits 1.
+  - id: voice-order
+    choice: >
+      Voice order for crossing pairs and pair naming is the score parts array order.
+      P3 slice requires exactly [soprano, alto, tenor, bass].
+
+scope_in:
+  - engine/validators.py: parallel_perfect + voice_crossing (severity error, autofix false).
+  - 'engine/voicer.py (new): plan schema, chord math (major only), backtracking search with fail-early pair checks, fill_voices pure core, op wrapper.'
+  - 'engine/ops.py: uniform (path, extra=None) signature + op_voice_fill.'
+  - 'engine/registry.json: +op voice-fill, +validators parallel-perfect, voice-crossing (sorted, implementation implemented, summaries).'
+  - 'mtdt.py: voice-fill subcommand (score plan [--out FILE]) + ops --plan passthrough.'
+  - 'check_shelf.py: P1 lock relaxation in validate_record only (no new imports).'
+  - 'update_index.py: refuse --implementation implemented for ids absent from the engine registry (typo guard via engine.registry.load).'
+  - 3 card bodies (Validation status rewrite, English only) + rehash.
+  - skills/index.json wiring via update_index --apply (sanctioned writer only).
+  - 'tests/test_slice.py (new): plan schema, voicer RAT, adversarial fixtures, card lifecycle + code linkage, CLI smoke.'
+  - 'tests/test_slice_live.py (new): skip-guarded bridge smoke (RUN_LIVE_LLM=1).'
+  - 'fixtures: scores/satb-skeleton.json, scores/satb-parallel.json, scores/satb-crossing.json, scores/satb-contrary.json, plans/satb-chord-plan.json.'
+  - 'test edits: test_check_shelf (lifecycle + layout), test_engine (ENCODING_PATHS plans glob, TEST_BANNED_IMPORTS minus urllib, lock tests rewritten).'
+  - README P3 section, report-p3.md, version v0.3.0.
+
+scope_out:
+  - 'notation rendering, playback, species counterpoint, spacing validator, minor-key chord math, stable status, selection matcher changes.'
+  - 'runtime gating of validated cards (no consumer reads bodies; mechanical test only).'
+
+validators:
+  - id: parallel-perfect
+    severity: error
+    autofix: false
+    rule: >
+      For every unordered voice pair and every consecutive pair of sample times
+      where both voices sound (attack or held; rests skip): let classes be
+      (upper-lower) mod 12. If both classes are equal and in {0, 7} and the motion
+      is similar (both move, same nonzero direction), emit one error.
+      Arrival naming by absolute semitones: 0 unisons, 7/19/... fifths, 12/24/...
+      octaves. Contrary/oblique motion is legal (card Hard constraints).
+      part=null, measure=arrival measure,
+      message 'parallel fifths: soprano and alto, measures 1->2' style
+      (pair named in parts-array order).
+  - id: voice-crossing
+    severity: error
+    autofix: false
+    rule: >
+      Adjacent voices in parts-array order. At every sample time where both sound:
+      if upper pitch is strictly below lower pitch, emit one error.
+      Unison (equal) is legal. part=null,
+      message 'voice crossing: alto (57) sounds below tenor (60) at measure 3' style.
+  - sample-times: >
+      Sorted unique (measure, onset) attack points across all parts; sounding pitch
+      at t = pitch of the covering event with greatest start <= t (absolute
+      Fraction time); pitch null (rest) or uncovered means skip.
+
+plan_schema:
+  keys: '{schema_version, key, slots}'
+  schema_version: "'1'"
+  key: '{tonic: ^[A-G][#b]?$, mode: major} (minor rejected)'
+  slots: 'array of {measure: int >= 1, chord: one of I ii iii IV V vi vii° viio}; measures unique'
+  chords_major_degrees: '{I:0, ii:1, iii:2, IV:3, V:4, vi:5, vii°:6, viio:6} over major scale semis [0,2,4,5,7,9,11] from tonic pc'
+
+voicer:
+  inputs: 'Score with parts exactly [soprano, alto, tenor, bass]; alto/tenor hold only full-measure rests (pitch null); all parts ranged'
+  skeleton_rule: >
+    For every plan measure, soprano and bass each have exactly one event with
+    onset 0 and duration == measure_length, else VoicerError. Soprano/bass pitch
+    classes must belong to the slot chord (incompatibility -> VoicerError, the
+    revise trigger). Alto/tenor must hold exactly one full-measure rest
+    (pitch null) per plan measure, else VoicerError (already filled).
+  candidates: 'chord-factor midis within declared range, ordered by (|m - prev|, m); prev None -> ascending'
+  place_order: 'alto then tenor per slot, slots ascending'
+  fail_early: 'crossing vs placed neighbors on placement; parallels vs previous sonority when both endpoints placed'
+  full_sonority: 'chord pc set equality across 4 voices; leading-tone pc ((tonic+11)%12) count <= 1'
+  budget: '200000 placements, then VoicerError(search budget exhausted)'
+  output: 'new Score (alto/tenor whole-note events, pitch names sharps, octave midi//12-1); re-parsed via parse_score'
+
+rat_preregistered:
+  skeleton: 'tests/fixtures/scores/satb-skeleton.json (S E4 E4 F4 D4 / B C3 A2 F2 G2, alto/tenor whole-note rests, 4/4 C major)'
+  plan: 'tests/fixtures/plans/satb-chord-plan.json (I vi IV V)'
+  expect_alto: ['G3', 'A3', 'A3', 'B3']
+  expect_tenor: ['C3', 'C3', 'C3', 'G3']
+  expect_validate: 'exit 0, findings []'
+  fallback: 'scope-C shrink (fixture plan deterministic slice only + limits documented); no wiring on RAT failure'
+
+adversarial:
+  - fixture: scores/satb-parallel.json
+    expect: 'exactly 1 finding: (parallel-perfect, None, error, measure 2); message names soprano and alto; validate exit 3'
+  - fixture: scores/satb-crossing.json
+    expect: 'exactly 1 finding: (voice-crossing, None, error, measure 1); message names soprano and alto; validate exit 3'
+  - fixture: scores/satb-contrary.json
+    expect: 'validate exit 0, findings [] (contrary-motion fifths are legal)'
+
+wiring:
+  - card: parallel-motion-avoidance
+    add_validator: {id: parallel-perfect, severity: error, autofix: false, implementation: implemented}
+  - card: voice-leading-rules
+    add_validator: {id: voice-crossing, severity: error, autofix: false, implementation: implemented}
+  - card: satb-chorale-harmonization
+    add_op: {id: voice-fill, implementation: implemented}
+  - bodies: 'Validation status sections of the 3 cards rewritten (English, name the wired op/validator + v0.3.0); rehash via update_index'
+  - untouched: '33 cards byte-identical (hash check in test)'
+
+cli:
+  - voice-fill: 'mtdt.py voice-fill <score> <plan> [--out FILE]; emits {score, findings}; exits 0/3/2/1 per contract'
+  - ops-plan: 'mtdt.py ops voice-fill <score> --plan <plan>; missing --plan exits 2'
+
+live_smoke:
+  file: tests/test_slice_live.py
+  gate: "skipUnless RUN_LIVE_LLM == '1' and API_SECRET present"
+  lane: 'perplexity/default via loopback bridge (zero Go); secret never printed'
+  asserts: 'response parses as plan JSON (fence-stripped); if soprano/bass compatible -> fill + validate clean; if incompatible -> skipTest (documented flakiness boundary)'
+
+acceptance:
+  - 'RAT passes exactly as preregistered (pitches + exit 0).'
+  - 'Adversarial fixtures behave exactly as specified.'
+  - 'P2 RAT table and P2 suite green without modification of expectations (lock tests rewritten, not weakened).'
+  - 'Exactly 3 cards validated with the exact declarations above; 33 untouched.'
+  - 'Registry bidirectional sync holds (existing tests).'
+  - 'Manual live revise-loop run recorded in report-p3 (<=1 live call set).'
+  - 'docs: README P3 section, report-p3.md (RAT result, consult record, deviations or none).'
+
+gates:
+  - 'python -m unittest discover -s tests (full suite, exit 0)'
+  - 'CLI smoke incl. new voice-fill commands (scripted list in report)'
+  - 'YAML parse + BOM/LF check on docs + fixtures'
+  - 'git diff --check; push origin main'

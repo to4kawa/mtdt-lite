@@ -1,0 +1,40 @@
+{
+  "schema_version": "1",
+  "title": "Voice crossing soprano-alto",
+  "meter": {"numerator": 4, "denominator": 4},
+  "key": {"tonic": "C", "mode": "major"},
+  "parts": [
+    {
+      "id": "soprano",
+      "name": "Soprano",
+      "range": {"low": "C4", "high": "A4"},
+      "events": [
+        {"measure": 1, "onset": 0, "duration": 1, "pitch": "E4"}
+      ]
+    },
+    {
+      "id": "alto",
+      "name": "Alto",
+      "range": {"low": "E4", "high": "A4"},
+      "events": [
+        {"measure": 1, "onset": 0, "duration": 1, "pitch": "G4"}
+      ]
+    },
+    {
+      "id": "tenor",
+      "name": "Tenor",
+      "range": {"low": "B3", "high": "D4"},
+      "events": [
+        {"measure": 1, "onset": 0, "duration": 1, "pitch": "C4"}
+      ]
+    },
+    {
+      "id": "bass",
+      "name": "Bass",
+      "range": {"low": "F2", "high": "A2"},
+      "events": [
+        {"measure": 1, "onset": 0, "duration": 1, "pitch": "G2"}
+      ]
+    }
+  ]
+}

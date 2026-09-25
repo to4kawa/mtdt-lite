@@ -1,0 +1,44 @@
+{
+  "schema_version": "1",
+  "title": "Contrary-motion fifths stay legal",
+  "meter": {"numerator": 4, "denominator": 4},
+  "key": {"tonic": "C", "mode": "major"},
+  "parts": [
+    {
+      "id": "soprano",
+      "name": "Soprano",
+      "range": {"low": "B3", "high": "F4"},
+      "events": [
+        {"measure": 1, "onset": 0, "duration": 1, "pitch": "C4"},
+        {"measure": 2, "onset": 0, "duration": 1, "pitch": "E4"}
+      ]
+    },
+    {
+      "id": "alto",
+      "name": "Alto",
+      "range": {"low": "G2", "high": "A3"},
+      "events": [
+        {"measure": 1, "onset": 0, "duration": 1, "pitch": "F3"},
+        {"measure": 2, "onset": 0, "duration": 1, "pitch": "A2"}
+      ]
+    },
+    {
+      "id": "tenor",
+      "name": "Tenor",
+      "range": {"low": "F2", "high": "A3"},
+      "events": [
+        {"measure": 1, "onset": 0, "duration": 1, "pitch": "E3"},
+        {"measure": 2, "onset": 0, "duration": 1, "pitch": "G2"}
+      ]
+    },
+    {
+      "id": "bass",
+      "name": "Bass",
+      "range": {"low": "D2", "high": "C3"},
+      "events": [
+        {"measure": 1, "onset": 0, "duration": 1, "pitch": "C3"},
+        {"measure": 2, "onset": 0, "duration": 1, "pitch": "E2"}
+      ]
+    }
+  ]
+}

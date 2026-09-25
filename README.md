@@ -12,16 +12,18 @@ This repo currently spans **Phase 1 (P1)** — the skill shelf: 36 cards across
 11 categories, a machine-readable index, a read-only integrity checker, and a
 selection fixture — and **Phase 2 (P2)** — the deterministic engine: a strictly
 validated JSON score model, a 3-op registry, 3 mechanical validators, and a
-stdlib-only CLI. Cards themselves stay `draft` / advisory until P3 wires them
-to the implemented registry.
+stdlib-only CLI — and **Phase 3 (P3, v0.3.0)** — the first end-to-end slice:
+a discrete chord plan plus a deterministic backtracking voicer fill SATB inner
+voices (`voice-fill`), judged by 5 validators including `parallel-perfect` and
+`voice-crossing`; 3 cards are `validated`, 33 stay `draft` / advisory.
 
 ## Layout
 
 ```
 check_shelf.py                 # P1 read-only integrity checker (stdlib only, frozen contract)
-mtdt.py                        # P2 CLI: select / validate / normalize / ops / validators
+mtdt.py                        # CLI: select / validate / normalize / ops / validators / voice-fill
 update_index.py                # sanctioned index writer (validates candidate before writing)
-engine/                        # P2 score model, op registry (registry.json), mechanical validators
+engine/                        # score model, op registry (registry.json), mechanical validators, SATB voicer
 skills/index.json              # machine-readable card index (id/category/mode/examples/effects/not_when)
 skills/<id>.md                 # one card per file: Purpose / Use when / Procedure / Hard constraints / ...
 tests/                         # unittest suites (P1 shelf + P2 engine) + selection + score fixtures
@@ -61,12 +63,21 @@ python3 mtdt.py ops score-load tests/fixtures/scores/good-chorale.json
 python3 mtdt.py validators                                        # registry metadata JSON
 ```
 
+## Engine slice (P3)
+
+```bash
+python3 mtdt.py voice-fill tests/fixtures/scores/satb-skeleton.json tests/fixtures/plans/satb-chord-plan.json
+# fills alto/tenor rests from the discrete chord plan (I vi IV V); emits {score, findings}; exit 3 on severity=error
+python3 mtdt.py ops voice-fill tests/fixtures/scores/satb-skeleton.json --plan tests/fixtures/plans/satb-chord-plan.json
+```
+
 Exit codes: `0` ok, `1` usage/internal, `2` file/schema/registry violation,
 `3` error-severity findings. Validators are mechanical only — `measure-fill`,
-`voice-range`, `note-overlap`; counterpoint/voice-crossing checks are P3. A
-part with no declared range yields a visible `info` finding, never a silent
-pass. `select` runs the full shelf check first (same contract as
-`--selection-fixture`).
+`voice-range`, `note-overlap`, `parallel-perfect` (similar-motion consecutive
+perfect 5ths/octaves/unisons; contrary/oblique stay legal), `voice-crossing`
+(strict adjacent-voice order; unisons legal). A part with no declared range
+yields a visible `info` finding, never a silent pass. `select` runs the full
+shelf check first (same contract as `--selection-fixture`).
 
 ## Updating the index (never hand-edit `skills/index.json`)
 
@@ -76,15 +87,17 @@ python3 update_index.py --card <id> --add-op score-load --apply   # validated wr
 python3 update_index.py --rehash --apply                          # recompute hashes after body edits
 ```
 
-Every candidate is validated against the P1 shelf contract before any write.
-P1-lock violations (e.g. `implementation: implemented` on a card) refuse the
-write with a non-zero exit and leave the file byte-identical — cards are wired
-to the registry in P3, not before.
+Every candidate is validated against the shelf contract before any write.
+`--implementation implemented` is refused for ids absent from the engine
+registry (typo guard), and `--status validated` is refused unless every
+declared op/validator of the card is implemented — the file stays
+byte-identical on refusal. `stable` is not offered (a later phase).
 
 ## Constraints (important)
 
-- **P1 cards are all `draft` / advisory.** Each card's *Validation status* says the
-  engine validator is unimplemented — do **not** report a result as "validated".
+- **33 cards are `draft` / advisory; 3 are `validated`.** Each unwired card's
+  *Validation status* says its check is unimplemented — do **not** report such
+  a result as "validated". Wired cards name their op/validator and version.
 - `composes_with` lets related cards be read together (e.g. `phrase-arc` +
   `texture-density`).
 - 11 categories: foundations / harmony / counterpoint / melody / rhythm / form /

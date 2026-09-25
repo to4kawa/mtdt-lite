@@ -40,7 +40,7 @@ Create a four-part harmonization while keeping the outer voices coherent.
 
 ## Validation status
 
-P1 has no implemented engine validator for this card. Treat every result as advisory until P2 provides named operations and validators; do not describe an unimplemented check as performed.
+P3 wires this card to the deterministic engine: op `voice-fill` (implemented, v0.3.0) fills alto and tenor rests from a discrete chord plan with a deterministic backtracking voicer, then runs every registered validator. Only accepted (exit 0) scores count as checked. Do not describe any other check as performed.
 
 ## Failure modes
 

@@ -6,7 +6,9 @@ import check_shelf
 from engine import ops as ops_module
 from engine import registry as registry_module
 from engine.registry import RegistryError
-from engine.score import ScoreError
+from engine.score import ScoreError, load_score_file, score_to_dict
+from engine.validators import run_validators
+from engine.voicer import VoicerError, fill_voices, load_plan_file
 
 SKILLS_ROOT = Path(__file__).resolve().parent / 'skills'
 
@@ -66,12 +68,43 @@ def command_ops(args):
         print(f'2: {exc}', file=sys.stderr)
         return 2
     try:
-        result = operation(args.score)
+        result = operation(args.score, args.plan)
     except ScoreError as exc:
         print(f'2: {exc}', file=sys.stderr)
         return 2
     emit(result)
     if isinstance(result, list) and any(finding['severity'] == 'error' for finding in result):
+        return 3
+    if isinstance(result, dict) and any(
+            finding['severity'] == 'error' for finding in result.get('findings', [])):
+        return 3
+    return 0
+
+
+def command_voice_fill(args):
+    try:
+        score = load_score_file(args.score)
+    except ScoreError as exc:
+        print(f'2: {exc}', file=sys.stderr)
+        return 2
+    try:
+        plan = load_plan_file(args.plan)
+    except ScoreError as exc:
+        print(f'2: {exc}', file=sys.stderr)
+        return 2
+    try:
+        filled = fill_voices(score, plan)
+    except VoicerError as exc:
+        print(f'1: {exc}', file=sys.stderr)
+        return 1
+    findings = [finding.to_dict() for finding in run_validators(filled)]
+    payload = {'findings': findings, 'score': score_to_dict(filled)}
+    if args.out is not None:
+        Path(args.out).write_bytes(
+            (json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2) + '\n').encode('utf-8'))
+    else:
+        emit(payload)
+    if any(finding['severity'] == 'error' for finding in findings):
         return 3
     return 0
 
@@ -92,6 +125,7 @@ HANDLERS = {
     'normalize': command_normalize,
     'ops': command_ops,
     'validators': command_validators,
+    'voice-fill': command_voice_fill,
 }
 
 
@@ -110,6 +144,12 @@ def main(argv=None):
     ops_parser = subparsers.add_parser('ops', help='run a named registry operation')
     ops_parser.add_argument('op_id')
     ops_parser.add_argument('score')
+    ops_parser.add_argument('--plan', default=None)
+    voice_fill_parser = subparsers.add_parser(
+        'voice-fill', help='fill SATB inner voices from a chord plan')
+    voice_fill_parser.add_argument('score')
+    voice_fill_parser.add_argument('plan')
+    voice_fill_parser.add_argument('--out', default=None)
     subparsers.add_parser('validators', help='list registered validators')
     try:
         args = parser.parse_args(argv)

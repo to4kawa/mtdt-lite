@@ -122,22 +122,37 @@ class ShelfTests(unittest.TestCase):
             body = SKILLS / record['body_path']
             self.assertEqual(record['body_sha256'], hashlib.sha256(body.read_bytes()).hexdigest())
 
-    def test_no_implemented_checks(self):
+    def test_card_lifecycle_p3(self):
+        validated = {}
         for record in read_index()['skills']:
-            self.assertEqual(record['status'], 'draft')
-            self.assertTrue(all(op['implementation'] == 'unimplemented' for op in record['ops']))
-            self.assertTrue(all(validator['implementation'] in {'unimplemented', 'advisory'} for validator in record['validators']))
-            self.assertNotIn('implemented', [op['implementation'] for op in record['ops']])
-            self.assertNotIn('implemented', [validator['implementation'] for validator in record['validators']])
+            if record['status'] == 'validated':
+                validated[record['id']] = record
+                declared = record['ops'] + record['validators']
+                self.assertTrue(declared, record['id'])
+                self.assertTrue(
+                    all(item['implementation'] == 'implemented' for item in declared),
+                    record['id'])
+            else:
+                self.assertEqual(record['status'], 'draft', record['id'])
+                self.assertTrue(all(op['implementation'] != 'implemented' for op in record['ops']))
+                self.assertTrue(all(
+                    validator['implementation'] != 'implemented'
+                    for validator in record['validators']))
+        self.assertEqual(sorted(validated), [
+            'parallel-motion-avoidance',
+            'satb-chorale-harmonization',
+            'voice-leading-rules',
+        ])
 
     def test_op_validator_availability(self):
         for record in read_index()['skills']:
             for op in record['ops']:
                 self.assertEqual(set(op), {'id', 'implementation'})
-                self.assertEqual(op['implementation'], 'unimplemented')
+                self.assertIn(op['implementation'], {'unimplemented', 'implemented'})
             for validator in record['validators']:
                 self.assertEqual(set(validator), {'id', 'severity', 'autofix', 'implementation'})
-                self.assertIn(validator['implementation'], {'unimplemented', 'advisory'})
+                self.assertIn(
+                    validator['implementation'], {'unimplemented', 'advisory', 'implemented'})
                 self.assertIsInstance(validator['autofix'], bool)
 
     def test_dependency_references_resolve(self):
@@ -224,11 +239,19 @@ class ShelfTests(unittest.TestCase):
             'engine/validators.py',
             'engine/registry.py',
             'engine/registry.json',
+            'engine/voicer.py',
+            'tests/test_slice.py',
+            'tests/test_slice_live.py',
             'tests/fixtures/scores/good-chorale.json',
             'tests/fixtures/scores/good-melody.json',
             'tests/fixtures/scores/bad-underfull.json',
             'tests/fixtures/scores/bad-range.json',
             'tests/fixtures/scores/bad-overlap.json',
+            'tests/fixtures/scores/satb-skeleton.json',
+            'tests/fixtures/scores/satb-parallel.json',
+            'tests/fixtures/scores/satb-crossing.json',
+            'tests/fixtures/scores/satb-contrary.json',
+            'tests/fixtures/plans/satb-chord-plan.json',
         ))
         actual = {path.relative_to(TOOL_ROOT) for path in TOOL_ROOT.rglob('*') if path.is_file() and '__pycache__' not in path.parts and path.suffix != '.pyc' and path.relative_to(TOOL_ROOT).parts[0] not in NON_TOOL_TOP}
         self.assertEqual(actual, expected)

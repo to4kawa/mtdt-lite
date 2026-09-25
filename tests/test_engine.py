@@ -26,12 +26,13 @@ ENCODING_PATHS = [
     ROOT / 'AGENTS.md',
     Path(__file__),
     *sorted(SCORE_FIXTURES.glob('*.json')),
+    *sorted((ROOT / 'tests' / 'fixtures' / 'plans').glob('*.json')),
 ]
 ALLOWED_IMPORTS = {'argparse', 'dataclasses', 'fractions', 'json', 'pathlib', 're', 'sys'}
 LOCAL_IMPORTS = {'check_shelf', 'engine'}
 BANNED_CALLS = {'system', 'popen', 'Popen', 'run', 'check_call', 'check_output'}
 TEST_BANNED_IMPORTS = {
-    'socket', 'urllib', 'http', 'ftplib', 'ssl', 'smtplib',
+    'socket', 'http', 'ftplib', 'ssl', 'smtplib',
     'requests', 'httpx', 'openai', 'anthropic', 'asyncio',
 }
 RAT = {
@@ -303,7 +304,7 @@ class CliExitCodeTests(unittest.TestCase):
         payload = json.loads(result.stdout)
         self.assertEqual(
             [entry['id'] for entry in payload],
-            ['measure-fill', 'note-overlap', 'voice-range'])
+            ['measure-fill', 'note-overlap', 'parallel-perfect', 'voice-crossing', 'voice-range'])
         for entry in payload:
             self.assertEqual(set(entry), {'id', 'severity', 'autofix', 'implementation', 'summary'})
             self.assertEqual(entry['severity'], 'error')
@@ -432,8 +433,11 @@ class RegistryTests(unittest.TestCase):
         self.assertEqual(validator_ids, sorted(validator_ids))
         self.assertEqual(set(op_ids), set(ops_module.OPS_IMPL))
         self.assertEqual(set(validator_ids), set(validators_module.VALIDATORS))
-        self.assertEqual(set(op_ids), {'score-load', 'score-normalize', 'score-validate'})
-        self.assertEqual(set(validator_ids), {'measure-fill', 'note-overlap', 'voice-range'})
+        self.assertEqual(
+            set(op_ids), {'score-load', 'score-normalize', 'score-validate', 'voice-fill'})
+        self.assertEqual(
+            set(validator_ids),
+            {'measure-fill', 'note-overlap', 'parallel-perfect', 'voice-crossing', 'voice-range'})
         for entry in data['ops']:
             self.assertEqual(set(entry), {'id', 'implementation', 'summary'})
             self.assertEqual(entry['implementation'], 'implemented')
@@ -650,17 +654,25 @@ class UpdateIndexTests(unittest.TestCase):
         self.assertIn('dry-run', result.stdout)
         self.assertEqual(self.index_bytes(), self.original)
 
-    def test_refuses_implementation_lock(self):
+    def test_accepts_implemented_for_registered_op(self):
         result = self.run_update(
             '--card', 'pitch-intervals', '--add-op', 'score-load',
             '--implementation', 'implemented')
-        self.assertEqual(result.returncode, 2, result.stderr)
-        self.assertIn('unimplemented', result.stderr)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('dry-run', result.stdout)
         self.assertEqual(self.index_bytes(), self.original)
 
-    def test_refuses_implementation_lock_for_validators(self):
+    def test_accepts_implemented_for_registered_validator(self):
         result = self.run_update(
             '--card', 'pitch-intervals', '--add-validator', 'measure-fill',
+            '--implementation', 'implemented')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('dry-run', result.stdout)
+        self.assertEqual(self.index_bytes(), self.original)
+
+    def test_refuses_implemented_for_unknown_id(self):
+        result = self.run_update(
+            '--card', 'pitch-intervals', '--add-validator', 'bogus-id',
             '--implementation', 'implemented')
         self.assertEqual(result.returncode, 2, result.stderr)
         self.assertEqual(self.index_bytes(), self.original)

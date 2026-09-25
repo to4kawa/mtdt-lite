@@ -187,8 +187,19 @@ def validate_record(record, position, issues):
         add(issues, 2, f'{prefix}.mode is invalid')
     if record.get('level') not in LEVELS:
         add(issues, 2, f'{prefix}.level is invalid')
-    if record.get('status') != 'draft':
-        add(issues, 2, f'{prefix}.status must be draft in P1')
+    status = record.get('status')
+    if status == 'validated':
+        declared = []
+        if isinstance(record.get('ops'), list):
+            declared.extend(record['ops'])
+        if isinstance(record.get('validators'), list):
+            declared.extend(record['validators'])
+        if not declared or not all(
+                isinstance(item, dict) and item.get('implementation') == 'implemented'
+                for item in declared):
+            add(issues, 2, f'{prefix}.status validated requires every declared op/validator implemented')
+    elif status != 'draft':
+        add(issues, 2, f'{prefix}.status must be draft or validated')
     if record.get('schema_version') != '1':
         add(issues, 2, f'{prefix}.schema_version must be 1')
     if record.get('body_path') != f'{card_id}.md':
@@ -214,15 +225,15 @@ def validate_record(record, position, issues):
         add(issues, 2, f'{prefix}.ops must be a list')
     else:
         for op_index, op in enumerate(ops):
-            if not isinstance(op, dict) or set(op) != OP_FIELDS or op.get('implementation') != 'unimplemented' or not isinstance(op.get('id'), str) or not op['id']:
-                add(issues, 2, f'{prefix}.ops[{op_index}] is invalid or not unimplemented')
+            if not isinstance(op, dict) or set(op) != OP_FIELDS or op.get('implementation') not in {'unimplemented', 'implemented'} or not isinstance(op.get('id'), str) or not op['id']:
+                add(issues, 2, f'{prefix}.ops[{op_index}] is invalid (P3: implementation must be unimplemented or implemented)')
     validators = record.get('validators')
     if not isinstance(validators, list):
         add(issues, 2, f'{prefix}.validators must be a list')
     else:
         for validator_index, validator in enumerate(validators):
-            if not isinstance(validator, dict) or set(validator) != VALIDATOR_FIELDS or not isinstance(validator.get('id'), str) or not validator['id'] or validator.get('severity') not in SEVERITIES or not isinstance(validator.get('autofix'), bool) or validator.get('implementation') not in {'unimplemented', 'advisory'}:
-                add(issues, 2, f'{prefix}.validators[{validator_index}] is invalid for P1')
+            if not isinstance(validator, dict) or set(validator) != VALIDATOR_FIELDS or not isinstance(validator.get('id'), str) or not validator['id'] or validator.get('severity') not in SEVERITIES or not isinstance(validator.get('autofix'), bool) or validator.get('implementation') not in {'unimplemented', 'advisory', 'implemented'}:
+                add(issues, 2, f'{prefix}.validators[{validator_index}] is invalid (P3: implementation must be unimplemented, advisory, or implemented)')
 
 
 def validate_index(index, issues):

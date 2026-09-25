@@ -40,7 +40,7 @@ Check smooth and intelligible motion between voices.
 
 ## Validation status
 
-P1 has no implemented engine validator for this card. Treat every result as advisory until P2 provides named operations and validators; do not describe an unimplemented check as performed.
+P3 wires this card to the deterministic engine: validator `voice-crossing` (implemented, v0.3.0) checks adjacent voices in score order at every sounding time and reports strict order violations with both pitches named. Unisons are legal. Do not describe any other check as performed.
 
 ## Failure modes
 

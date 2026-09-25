@@ -1,5 +1,5 @@
 {
-  "catalog_sha256": "30ac14f99de7cb382a96f1f2ebbdae2c380a784665a86a3903723d40afa906a4",
+  "catalog_sha256": "f6fb09da7c9def630899a8eecf285c6bbd6447b946fb075b129758c123e95866",
   "schema_version": "1",
   "skills": [
     {
@@ -979,7 +979,7 @@
     },
     {
       "body_path": "parallel-motion-avoidance.md",
-      "body_sha256": "cf6583f19ae95b2852c7992f7f49b4750951d6dd11dd4248236a3fcb76c8180e",
+      "body_sha256": "d02c8b85118733d6f9c11fe341c9493a8384b4815a3a3b48d6e16dc60a825b4d",
       "category": "counterpoint",
       "composes_with": [
         "dissonance-treatment"
@@ -1025,7 +1025,7 @@
         "voice-leading-rules"
       ],
       "schema_version": "1",
-      "status": "draft",
+      "status": "validated",
       "summary_ja": "平行5度・8度などの禁止進行を明示的に検出する。",
       "theory_refs": [
         "Open Music Theory: contrapuntal motion",
@@ -1035,7 +1035,14 @@
       "use_when": [
         "detect parallel fifths and parallel octaves"
       ],
-      "validators": []
+      "validators": [
+        {
+          "autofix": false,
+          "id": "parallel-perfect",
+          "implementation": "implemented",
+          "severity": "error"
+        }
+      ]
     },
     {
       "body_path": "period-sentence.md",
@@ -1397,7 +1404,7 @@
     },
     {
       "body_path": "satb-chorale-harmonization.md",
-      "body_sha256": "2b3668bcfbc826150d25b5e07c897964c45ada78f7289ddad5160eba36177ee9",
+      "body_sha256": "2af23d7ea182db0cdbae4442c4cbb799fd515b135f977375528c45eeae663a02",
       "category": "harmony",
       "composes_with": [
         "satb-closed-score",
@@ -1432,7 +1439,12 @@
       "not_when": [
         "when the texture is monophonic or the form has no harmonic role"
       ],
-      "ops": [],
+      "ops": [
+        {
+          "id": "voice-fill",
+          "implementation": "implemented"
+        }
+      ],
       "outputs": [
         "Roman-numeral or function analysis",
         "candidate chord and cadence choices"
@@ -1446,7 +1458,7 @@
         "voice-leading-rules"
       ],
       "schema_version": "1",
-      "status": "draft",
+      "status": "validated",
       "summary_ja": "ソプラノとバスを固定した条件下で四声和声を設計する。",
       "theory_refs": [
         "Open Music Theory: four-part writing",
@@ -2065,7 +2077,7 @@
     },
     {
       "body_path": "voice-leading-rules.md",
-      "body_sha256": "e3d92e7f6b6aa17c74f2356df20331f07e2b0b90bd4ed14fed726f0791d3cf86",
+      "body_sha256": "c5c1afec5778fdaedbaa71fe1c293d75139d4ec70cf8643defa4f74743f59528",
       "category": "counterpoint",
       "composes_with": [
         "parallel-motion-avoidance",
@@ -2113,7 +2125,7 @@
         "metric-hierarchy"
       ],
       "schema_version": "1",
-      "status": "draft",
+      "status": "validated",
       "summary_ja": "和声的な声部移動の滑らかさと独立性を検査する。",
       "theory_refs": [
         "Open Music Theory: voice leading",
@@ -2123,7 +2135,14 @@
       "use_when": [
         "check voice leading between chord tones"
       ],
-      "validators": []
+      "validators": [
+        {
+          "autofix": false,
+          "id": "voice-crossing",
+          "implementation": "implemented",
+          "severity": "error"
+        }
+      ]
     },
     {
       "body_path": "wind-pairing.md",
