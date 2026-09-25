@@ -1,0 +1,168 @@
+feature: mtdt-lite
+source_spec: docs/spec-p2.yaml
+phase: P2
+status: draft
+notes: >-
+  P2 test plan, written before implementation together with docs/spec-p2.yaml.
+  The RAT fixtures (rat-score-fixtures) carry pre-registered expectations from
+  docs/draft-p2.md; if any of them fails, the score schema is amended BEFORE
+  implementation continues, never the expectations after the fact. Commands
+  below are run from the repository root; the AGENTS.md gate adds
+  `git diff --check`.
+fixture_path: tests/fixtures/selection_cases.json
+score_fixtures: tests/fixtures/scores/
+commands:
+  check: "python3 check_shelf.py --root skills --check"
+  selection_fixture: "python3 check_shelf.py --root skills --selection-fixture tests/fixtures/selection_cases.json"
+  unit_tests: 'python3 -m unittest discover -s tests -p "test_*.py"'
+tests:
+  - name: rat-score-fixtures
+    kind: deterministic
+    target: tests/fixtures/scores/*.json
+    expect: >-
+      all 5 fixtures parse under score_schema; validator runs match the
+      pre-registered expectations EXACTLY: good-chorale -> findings [], CLI
+      validate exit 0; good-melody -> exactly 1 voice-range info finding
+      (range-less part skip), exit 0; bad-underfull -> exactly 1 measure-fill
+      error for (harmony, 2), exit 3; bad-range -> exactly 1 voice-range
+      error, exit 3; bad-overlap -> exactly 1 note-overlap error (second
+      event), measure-fill silent, exit 3. Finding multisets compared on
+      (validator, part, measure, severity)
+  - name: score-schema-negatives
+    kind: deterministic
+    target: engine/score.py + mtdt.py
+    expect: >-
+      each seeded violation raises a schema error (ScoreError) with a
+      JSON-path reason and makes `mtdt.py validate` exit 2: extra top-level
+      key; missing required key at any level; float onset (0.5); string
+      decimal ('1.5'); bool measure (true); duration 0; negative onset;
+      non 'n/d'/int fraction ('2/0', 'a/b'); meter denominator 3; tonic 'H';
+      mode 'dorian'; bad pitch ('H4'); midi out of range ('C10'); event
+      overflowing its measure (onset+duration > measure_length); duplicate
+      part id; empty parts/events; range low > high; empty title; duplicate
+      JSON key in the file
+  - name: normalize-idempotent
+    kind: deterministic
+    target: mtdt.py normalize + engine/score.py
+    expect: >-
+      normalize output is canonical (sort_keys, indent 2, trailing LF,
+      fractions reduced: '2/4' -> '1/2', '4/4' -> 1, int 0 kept); re-parsing
+      the output and normalizing again yields byte-identical bytes; part
+      order and per-part event order are preserved (no re-sorting)
+  - name: cli-exit-code-mapping
+    kind: deterministic
+    target: mtdt.py
+    expect: >-
+      subprocess exit codes: 0 on good score (empty findings), good score
+      with info-only findings, empty selection, `validators`, `ops
+      score-load/normalize` on a good file; 1 on usage error (no arguments /
+      unknown subcommand); 2 on missing file, score schema violation,
+      unknown op id, and a failing shelf check during select; 3 on a score
+      with error-severity findings. Failures print '<code>: <reason>' to
+      stderr; stdout stays JSON/text; mtdt.py never writes a file
+  - name: registry-schema-and-sync
+    kind: deterministic
+    target: engine/registry.json + engine/registry.py + engine/ops.py + engine/validators.py
+    expect: >-
+      registry.json top level exactly {schema_version, ops, validators} with
+      schema_version '1'; exactly 3 id-sorted ops (score-load,
+      score-normalize, score-validate) and 3 id-sorted validators
+      (measure-fill, note-overlap, voice-range); every entry exact-keys,
+      implementation 'implemented', severity in enum, autofix bool false for
+      validators; ids match OPS_IMPL and VALIDATORS keys EXACTLY (two-way
+      sync); loader rejects a seeded drift (declared id without callable and
+      vice versa) and a seeded schema violation; `mtdt.py ops <unknown>`
+      exits 2
+  - name: validators-contract
+    kind: deterministic
+    target: engine/validators.py
+    expect: >-
+      every finding has exactly {validator, severity, part, measure,
+      message}; deterministic order (validator, part or '', measure or -1,
+      message); all three validators report severity 'error' with autofix
+      false in the registry; voice-range emits exactly one info finding per
+      range-less part with measure null; note-overlap treats boundary contact
+      (onset == running end) as non-overlap and flags a repeated
+      (measure, onset, duration) as 'duplicate'; measure-fill walks
+      1..max_measure across ALL parts (an empty trailing measure of a
+      shorter part is one error)
+  - name: import-boundary
+    kind: static
+    target: "mtdt.py, update_index.py, engine/*.py"
+    expect: >-
+      AST import scan: every import root within the closed allowlist
+      [argparse, dataclasses, fractions, json, pathlib, re, sys] plus local
+      {check_shelf, engine}; banned attribute calls (system, popen, Popen,
+      run, check_call, check_output) and eval/exec absent; a seeded source
+      ('import socket' / 'os.system(..)') is REJECTED by the same check
+      function (negative case proving non-vacuity). check_shelf.py itself
+      remains covered by its own frozen P1 self-scan only
+  - name: update-index-refusal
+    kind: deterministic
+    target: update_index.py + skills/index.json (temp copy)
+    expect: >-
+      a candidate violating the P1 lock is refused: --add-op with
+      --implementation implemented (or a status change / count drift) exits
+      non-zero (first_code, 2 or 4), issues printed to stderr, and the index
+      file is byte-identical to before the run; unknown --card id, removing
+      an absent id, and duplicate add all exit 2 with no write; default
+      dry-run of a VALID candidate exits 0 and also leaves the file
+      byte-identical
+  - name: update-index-apply
+    kind: deterministic
+    target: update_index.py (temp copy of skills/)
+    expect: >-
+      --apply of a conforming mutation (add-op score-load, default
+      implementation unimplemented) exits 0, the op appears in the card, the
+      index stays canonical, and `check_shelf.py --root <temp> --check`
+      exits 0 afterwards; remove-op of that op restores the original bytes
+      exactly; --rehash --apply is idempotent (byte-identical output on an
+      already-consistent index); catalog_sha256 recomputed correctly for any
+      metadata mutation
+  - name: select-cli-parity
+    kind: deterministic
+    target: mtdt.py select + check_shelf.py
+    expect: >-
+      `mtdt.py select <task>` returns exactly the cards
+      check_shelf.select_skills produces for the same index/task/filters
+      (subprocess vs in-process parity, order-sensitive); --format json
+      parses as an array of {id, title, category, mode, level}; text format
+      is '<id>\t<category>/<mode>\t<title>' per line; --mode/--category
+      filters and not_when exclusion behave as the P1 matcher; a task
+      matching nothing exits 0 with empty output; a corrupted shelf makes
+      select exit with the shelf's own code (fixture validation parity) and
+      prints nothing to stdout
+  - name: p2-source-encoding
+    kind: static
+    target: "mtdt.py, update_index.py, engine/*, tests/test_engine.py, tests/fixtures/scores/*.json, AGENTS.md"
+    expect: >-
+      every file decodes as UTF-8, has no BOM (no EF BB BF prefix) and no CR
+      bytes (LF-only); includes the registry.json and all 5 score fixtures
+  - name: test-files-no-network
+    kind: static
+    target: tests/*.py
+    expect: >-
+      AST scan of all test files: no network/LLM imports (socket, urllib,
+      http, ftplib, ssl, smtplib, requests, httpx, openai, anthropic,
+      asyncio); subprocess allowed solely to invoke LOCAL scripts
+      (check_shelf.py, mtdt.py, update_index.py)
+  - name: p1-frozen-and-layout
+    kind: static
+    target: check_shelf.py + repository layout
+    expect: >-
+      check_shelf.py unchanged by P2 (its P1 suite still passes with exit 0
+      on the shelf: --check, --selection-fixture, and the 14 P1 unittests
+      including the extended test_source_layout); test_source_layout's
+      expected set accounts for every new source file — AGENTS.md as
+      scaffolding (NON_TOOL_TOP), mtdt.py, update_index.py, engine/__init__.py,
+      engine/score.py, engine/ops.py, engine/validators.py, engine/registry.py,
+      engine/registry.json, tests/test_engine.py, and the 5 score fixtures —
+      with no unexpected files
+  - name: manual-report-review
+    kind: manual
+    target: docs/report-p2.md
+    expect: >-
+      operator review: report states what changed -> why -> how verified ->
+      residual risks; any deviation from docs/spec-p2.yaml (especially the
+      P1-lock refusal behavior and unwired cards) is called out explicitly;
+      no secrets pasted

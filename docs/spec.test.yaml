@@ -5,7 +5,13 @@ status: implemented
 notes: >-
   P1 tests were executed on 2026-09-25 after the shelf, checker, and fixture
   were implemented. The commands below passed; manual review cases remain
-  operator checks rather than automated assertions.
+  operator checks rather than automated assertions. P2 addendum (2026-09-25):
+  encoding-and-layout's "no extra source files" wording is P1-as-shipped;
+  since P2 the layout additionally contains AGENTS.md, mtdt.py,
+  update_index.py, engine/*, tests/test_engine.py and tests/fixtures/scores/*,
+  with the extended expected set tracked by test_source_layout and specified
+  in docs/spec-p2.test.yaml (p1-frozen-and-layout). check_shelf.py itself is
+  frozen P1 contract and unchanged.
 fixture_path: tests/fixtures/selection_cases.json
 commands:
   check: "python3 check_shelf.py --root skills --check"

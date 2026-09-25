@@ -1,0 +1,351 @@
+name: mtdt-lite
+version: 0.2.0
+status: draft
+status_note: >-
+  P2 spec written before implementation. Operator approval of this file is
+  the P2 promotion gate (docs/draft-p2.md). Once implemented, status flips
+  to implemented together with docs/report-p2.md.
+source_draft: docs/draft-p2.md
+phase: P2
+goal: >-
+  Add the deterministic engine core to the P1 shelf: a strictly validated
+  JSON score model, a named operation registry (3 implemented ops plus
+  machine-readable registry.json), 3 mechanical validators (measure-fill,
+  voice-range, note-overlap), a stdlib-only CLI (select/validate/normalize/
+  ops/validators), and the single sanctioned index writer (update_index.py).
+  No LLM, no network, no artistic judgment: the engine reports findings,
+  the CLI maps them to exit codes, and the shelf stays the inspectable
+  authority. Card wiring, controller/worker loops, counterpoint theory
+  checks, and MusicXML/MIDI interchange remain out of scope (P3+).
+p1_locks:
+  note: >-
+    check_shelf.py is FROZEN P1 contract and must not change in P2. Its
+    self-scan continues to cover check_shelf.py only; P2 production files
+    are governed by the import boundary below and tests/test_engine.py.
+  frozen:
+    - "check_shelf.py code byte-identical to P1 (no lock loosening, no allowlist change)"
+    - "exactly 36 cards, all status draft, ops implementation unimplemented, validators in {unimplemented, advisory}; 'implemented' anywhere in skills/index.json remains a hard error (exit 2)"
+    - "skills/index.json remains hand-edit-free; only update_index.py writes it"
+    - "the P1 gate commands and exit codes (0-5) are unchanged"
+scope:
+  - "engine/score.py — score JSON schema: parse, validate, canonical serialize (Score model)"
+  - "engine/ops.py — OPS_IMPL: score-load, score-validate, score-normalize (3 implemented ops)"
+  - "engine/validators.py — VALIDATORS: measure-fill, voice-range, note-overlap + Finding model"
+  - "engine/registry.json — machine-readable op/validator metadata (exact-keys schema)"
+  - "engine/registry.py — registry loader/validator with code<->JSON sync check"
+  - "engine/__init__.py — package marker (empty)"
+  - "mtdt.py — CLI: select / validate / normalize / ops / validators"
+  - "update_index.py — sanctioned index writer: dry-run by default, --apply writes"
+  - "tests/fixtures/scores/*.json — 5 hand-written RAT score fixtures"
+  - "tests/test_engine.py — schema/CLI/registry/update_index/import-boundary/encoding tests"
+out_of_scope:
+  - "counterpoint/voice-leading theory validators (parallel fifths/octaves, voice crossing/spacing) — P3"
+  - "card wiring: linking skills/index.json ops/validators to the registry; card status promotion beyond draft — P3"
+  - "LLM controller, worker, bounded revise loop — P3"
+  - "MusicXML/MIDI import or export; any interchange parser — future"
+  - "autofix execution (P2 locks autofix=false for all validators)"
+  - "score editing/transformation ops beyond load/validate/normalize — P3 on demand"
+  - "mtdt parity; Rust implementation; audio/PDF engraving; bridge lanes"
+  - "live LLM calls, network access, credentials of any kind"
+inputs:
+  - "score JSON files conforming to score_schema (tests/fixtures/scores/*.json are the RAT set)"
+  - "task text (+ optional mode/category filters) for the select subcommand"
+  - "skills/index.json (P1, read-only for all P2 commands except update_index.py)"
+  - "engine/registry.json (op/validator metadata)"
+outputs:
+  - "findings JSON on stdout from validate / ops score-validate"
+  - "canonical score JSON on stdout from normalize / ops score-normalize"
+  - "op summary JSON from ops score-load; validator metadata JSON from validators"
+  - "selected card records from select (text or JSON)"
+  - "updated skills/index.json ONLY via update_index.py --apply (validated candidate, canonical bytes)"
+file_layout:
+  root: .
+  tree: >-
+    ./
+      AGENTS.md
+      check_shelf.py          (P1, frozen)
+      mtdt.py                 (P2 CLI)
+      update_index.py         (P2 index writer)
+      engine/
+        __init__.py
+        score.py
+        ops.py
+        validators.py
+        registry.py
+        registry.json
+      skills/
+        index.json
+        <id>.md               (36 cards)
+      tests/
+        test_check_shelf.py   (P1 suite, layout set extended for P2 files)
+        test_engine.py        (P2 suite)
+        fixtures/
+          selection_cases.json
+          scores/
+            good-chorale.json
+            good-melody.json
+            bad-underfull.json
+            bad-range.json
+            bad-overlap.json
+      docs/
+        draft.md  spec.yaml  spec.test.yaml  report-p1.md     (P1)
+        draft-p2.md  spec-p2.yaml  spec-p2.test.yaml  report-p2.md  (P2)
+  notes:
+    - "runtime artifacts (__pycache__/, *.pyc) remain ignored as non-source; layout checks consider committed/source files only"
+score_schema:
+  conventions:
+    file: "UTF-8 without BOM, LF; parsed with duplicate-JSON-key rejection (check_shelf.read_json)"
+    exact_keys: "every object level has EXACTLY the keys listed; any extra or missing key is a schema error (CLI exit 2) with a JSON-path reason on stderr"
+    bool_guard: "bool is not int: true/false is never a valid measure, meter value, or fraction"
+    numbers: "schema integers reject bool; floats are never accepted anywhere"
+  top_level: "exactly schema_version, title, meter, key, parts"
+  fields:
+    schema_version: "'1'"
+    title: "non-empty string (after strip)"
+    meter:
+      exactly: "numerator, denominator"
+      numerator: "int >= 1 (bool rejected)"
+      denominator: "int in {1, 2, 4, 8, 16, 32} (bool rejected)"
+      measure_length: "numerator/denominator in whole notes (Fraction), e.g. 4/4 -> 1, 3/4 -> 3/4, 6/8 -> 3/4"
+    key:
+      exactly: "tonic, mode"
+      tonic: "matches ^[A-G][#b]?$"
+      mode: "one of major, minor"
+    parts: "non-empty array of part objects; part ids unique across the score"
+    part:
+      exactly: "id, name, events  (plus optional key range)"
+      id: "kebab-case (check_shelf.ID_RE), unique in the score"
+      name: "non-empty string"
+      range: "optional object exactly {low, high}; both pitch strings; midi(low) <= midi(high)"
+      events: "non-empty array of event objects"
+    event:
+      exactly: "measure, onset, duration, pitch"
+      measure: "int >= 1 (1-based, bool rejected)"
+      onset: "fraction: int >= 0 or 'n/d' string (see fractions); absolute position from the start of its measure"
+      duration: "fraction: int >= 0 or 'n/d' string; strictly > 0"
+      pitch: "null (rest) or pitch string (see pitch)"
+    fractions:
+      int_form: "non-negative int, e.g. 0, 1"
+      string_form: "'n/d' with n,d decimal integers, d > 0, reduced by gcd at parse; e.g. '2/4' -> 1/2, '4/4' -> 1"
+      rejected: "floats (0.5), negative values, zero denominator, empty string, decimals in strings ('1.5')"
+      measure_fit: "onset + duration <= measure_length must hold; violation is a schema error (the validator layer assumes events fit their measure)"
+    pitch:
+      regex: "^[A-G][#b]?-?[0-9]{1,2}$"
+      midi: "letter semitones C=0 D=2 E=4 F=5 G=7 A=9 B=11, #=+1, b=-1; midi = (octave + 1) * 12 + semitone; must be 0..127 (e.g. C-1=0, C4=60, G9=127, C10 invalid)"
+  canonical_serialization: >-
+    json.dumps(score_dict, sort_keys=True, ensure_ascii=False, indent=2) plus
+    one trailing newline. Fractions serialized canonically: denominator 1 ->
+    int, otherwise reduced 'n/d' with positive denominator. Part order and
+    per-part event order are PRESERVED (musical order is data, not noise);
+    normalize is idempotent (normalize(normalize(x)) is byte-identical).
+op_registry:
+  layers:
+    code: "engine/ops.py exports OPS_IMPL {op-id: callable}; engine/validators.py exports VALIDATORS {validator-id: (callable, severity, autofix)}"
+    metadata: "engine/registry.json is the machine-readable declaration consumed by tools and future controllers"
+    loader: "engine/registry.py loads and validates registry.json and resolves ids to callables"
+    sync: "declared ids in registry.json == keys of OPS_IMPL == keys of VALIDATORS as applicable, exactly (enforced at load and by tests; drift is a test failure)"
+  registry_json:
+    top_level: "exactly schema_version, ops, validators"
+    schema_version: "'1'"
+    ops: "id-sorted array; each exactly {id, implementation, summary}; id kebab-case unique; implementation == 'implemented'; summary non-empty English string"
+    validators: "id-sorted array; each exactly {id, severity, autofix, implementation, summary}; severity in {info, warning, error}; autofix bool; implementation == 'implemented'; summary non-empty English string"
+  ops:
+    score-load: >-
+      read file -> parse -> schema-validate -> Score. CLI prints an op summary
+      JSON {op, ok, title, parts, events, measures} (measures = max measure
+      across parts). Any file/schema problem: exit 2 with reason on stderr.
+    score-validate: >-
+      read file -> Score -> run all registry validators -> findings array on
+      stdout. Exit 3 if any finding has severity error, else 0.
+    score-normalize: >-
+      read file -> Score -> canonical score JSON on stdout (see
+      canonical_serialization). Exit 2 on any file/schema problem.
+  unknown_or_unimplemented: "mtdt.py ops with an id not declared+implemented in registry.json -> exit 2 (registry violation), reason on stderr"
+validators:
+  finding_shape:
+    exactly: "validator, severity, part, measure, message"
+    validator: "validator id"
+    severity: "the validator's severity from the registry (P2: all three are 'error'; range-skip notices are produced by voice-range with severity 'info')"
+    part: "part id string, or null when the finding is not part-scoped"
+    measure: "int >= 1, or null when the finding is not measure-scoped"
+    message: "deterministic English sentence; no clock, no randomness"
+    order: "findings sorted by (validator, part or '' , measure or -1, message)"
+  measure-fill: >-
+    max_measure = the highest event measure over ALL parts. For every part and
+    every measure m in 1..max_measure: union the part's event intervals within
+    measure m (each is [onset, onset+duration] inside [0, measure_length]) and
+    require exact coverage of [0, measure_length]. Any gap -> one error
+    finding for (part, m): message says 'no events (coverage 0 of ...)' when
+    the measure has no events, else 'underfull' with the covered fraction.
+    Parts must therefore fill every measure up to the longest part's length.
+  voice-range: >-
+    Part with a declared range: every pitched (non-rest) event must satisfy
+    midi(low) <= pitch <= midi(high); a violation is one error finding naming
+    the offending pitch and measure. Part WITHOUT a declared range: exactly
+    one info finding for that part (part-scoped, measure null, message states
+    the skip) — visible skip, never a silent pass, and never exit 3.
+  note-overlap: >-
+    Per part, iterate events in (measure, onset) order keeping the running
+    absolute end time. An event whose absolute onset is strictly before the
+    running end is one error finding: 'duplicate event' if the same
+    (measure, onset, duration) was already seen in that part, otherwise
+    'overlap' naming the running end. Boundary contact (onset == running end)
+    is not an overlap.
+  exit_rule: "any finding with severity 'error' -> validate / ops score-validate exit 3; info findings never change the exit code"
+  p2_locks:
+    - "registry declares exactly measure-fill, voice-range, note-overlap; all severity 'error', autofix false, implementation 'implemented'"
+    - "no theory/counterpoint/voice-crossing check exists in P2"
+cli:
+  file: mtdt.py
+  subcommands:
+    select: >-
+      mtdt.py select <task> [--mode M] [--category C] [--format text|json].
+      Performs the FULL P1 shelf check first (parity with
+      check_shelf.py --selection-fixture: a failing shelf returns its exit
+      code and skips selection), then runs check_shelf.select_skills on
+      skills/index.json resolved relative to mtdt.py's own location. Format
+      text (default): one line per card '<id>\t<category>/<mode>\t<title>'.
+      Format json: array of {id, title, category, mode, level}. No match ->
+      empty output, exit 0.
+    validate: >-
+      mtdt.py validate <score.json> -> findings JSON array on stdout;
+      exit 3 if any severity error, 2 on file/schema problem, 0 otherwise.
+    normalize: >-
+      mtdt.py normalize <score.json> -> canonical score JSON on stdout;
+      exit 2 on file/schema problem. Never writes files.
+    ops: >-
+      mtdt.py ops <op-id> <score.json> -> dispatches through engine.registry;
+      output per op_registry.ops; unknown/unimplemented id -> exit 2.
+    validators: "mtdt.py validators -> registry validator metadata JSON array (id, severity, autofix, implementation, summary), exit 0"
+  exit_codes:
+    0: "success (including empty selection and info-only findings)"
+    1: "usage error (argparse/UsageError) or unexpected internal exception"
+    2: "file / score schema / registry / shelf violation (missing or unreadable file, invalid JSON, schema error, unknown op id, invalid registry, failing shelf check)"
+    3: "one or more findings with severity error"
+  stderr: "every failure prints '<code>: <reason>' to stderr; stdout stays machine-readable (JSON or text lines) or empty"
+  determinism: "no clock, no randomness, no network, no model; same input -> same stdout bytes and same exit code"
+  read_only: "mtdt.py never writes any file in any subcommand"
+update_index:
+  file: update_index.py
+  purpose: "the only sanctioned writer of skills/index.json; hands-editing stays forbidden"
+  cli: >-
+    update_index.py [--root skills] ( --card <id> ( --add-op <op-id> [--implementation U] | --remove-op <op-id> | --add-validator <vid> [--severity S] [--autofix B] [--implementation I] | --remove-validator <vid> ) | --rehash ) [--apply]
+  defaults:
+    root: "skills (relative to cwd)"
+    implementation: "unimplemented (ops); for validators unimplemented unless given; P1 lock only permits {unimplemented, advisory} in cards"
+    severity: "error"
+    autofix: "false"
+    mode: "dry-run: validate the candidate and report on stdout; write NOTHING; exit 0 when the candidate is valid, otherwise print issues and exit first_code"
+  apply: >-
+    With --apply and a valid candidate: recompute catalog_sha256 (always, for
+    any metadata mutation), write canonical bytes via temp file + Path.replace,
+    then re-run the full check_shelf() on disk as belt-and-braces; its exit
+    code is returned (expected 0; any failure is printed, never silent).
+  rehash: "--rehash recomputes every body_sha256 from the body files then catalog_sha256; used for body edits outside update_index"
+  validation: >-
+    The candidate index must pass check_shelf.validate_index +
+    check_shelf.validate_bodies (against the on-disk bodies) before ANY
+    write. Consequences: implementation 'implemented' in a card op/validator,
+    status changes, count/id drift, or non-canonical serialization all refuse
+    the write (exit first_code, typically 2; count/id drift 4) and leave the
+    file byte-identical. This refusal is the CORRECT P2 behavior: cards stay
+    unwired until P3 relaxes the contract.
+  errors: "unknown --card id, removing an absent op/validator id, adding a duplicate id, malformed combinations -> exit 2, file unchanged"
+import_boundary:
+  production_p2_files: ["mtdt.py", "update_index.py", "engine/*.py"]
+  stdlib_allowlist: [argparse, dataclasses, fractions, json, pathlib, re, sys]
+  local_allowlist: [check_shelf, engine]
+  rule: "closed allowlist: any import root outside these sets is a violation; local imports may only be check_shelf and engine (engine.* resolves to root 'engine')"
+  banned_calls: ["attribute calls system, popen, Popen, run, check_call, check_output", "name calls eval, exec"]
+  enforcement: >-
+    tests/test_engine.py parses every P2 production file with AST and
+    asserts the closed allowlist plus banned-call absence, with a seeded
+    negative case proving the check is not vacuous. check_shelf.py's own
+    self-scan (exit 5) continues to cover check_shelf.py only and is NOT
+    extended to P2 files (P1 frozen lock).
+  reuse: >-
+    P2 files reuse check_shelf primitives instead of re-implementing shelf
+    logic: read_json (duplicate-key rejection), validate_index,
+    validate_bodies, check_shelf, first_code, select_skills, canonical_index,
+    catalog_hash, body_hash, Parser/UsageError. Score parsing is engine's own
+    (score_schema is not the shelf schema).
+  tests: >-
+    Test files (tests/*.py) may use stdlib freely except network/LLM modules
+    (socket, urllib, http, ftplib, ssl, smtplib, requests, httpx, openai,
+    anthropic, asyncio); subprocess is allowed solely to invoke LOCAL scripts
+    (check_shelf.py, mtdt.py, update_index.py) for exit-code tests.
+commands:
+  check: "python3 check_shelf.py --root skills --check"
+  selection_fixture: "python3 check_shelf.py --root skills --selection-fixture tests/fixtures/selection_cases.json"
+  unit_tests: 'python3 -m unittest discover -s tests -p "test_*.py"'
+  git_check: "git diff --check"
+  notes:
+    - "the four commands above are the AGENTS.md commit gate; all must exit 0"
+    - "Windows: python is equivalent where the py launcher is installed; chcp 65001 for non-ASCII output"
+    - "cargo is NOT required; no Rust workspace file may change"
+rat:
+  experiment: "5 hand-written score fixtures with PRE-REGISTERED expected findings (docs/draft-p2.md table)"
+  success: "all 5 fixtures match exactly: finding (validator, part, measure, severity) multisets and CLI exit codes 0/0/3/3/3"
+  failure: "any mismatch -> stop, amend score_schema (and this spec + the draft table) BEFORE implementation continues"
+  fixtures:
+    good-chorale: "4/4 x 2 measures, 4 parts, all ranges declared, all measures full -> findings [], exit 0"
+    good-melody: "3/4 x 1 measure, single part with a rest, NO range declared -> exactly 1 info finding, exit 0"
+    bad-underfull: "4/4 x 2 measures, 2 parts; harmony empty in measure 2 -> exactly 1 measure-fill error (harmony, 2), exit 3"
+    bad-range: "4/4 x 1 measure, 1 part, range C4..G5 with a G3 event -> exactly 1 voice-range error, exit 3"
+    bad-overlap: "4/4 x 1 measure, events [0,1/2] + [1/4,1/4] + [1/2,1/2] (union full) -> exactly 1 note-overlap error, exit 3"
+acceptance:
+  - "this spec passes review BEFORE any P2 code is written (draft promotion gate condition 2)"
+  - "RAT: the 5 score fixtures match their pre-registered findings and exit codes exactly"
+  - "score schema: all 5 fixtures parse; seeded violations (float onset, bool measure, extra key, bad pitch, midi out of 127, event overflowing its measure, duplicate part id, zero duration, non-power-of-two denominator) each raise a schema error and make validate exit 2"
+  - "validators: finding objects have exactly {validator, severity, part, measure, message}, are deterministically ordered, and measure-fill/voice-range/note-overlap behave per validators section; a range-less part yields exactly one info finding and still exits 0"
+  - "registry: engine/registry.json has the exact schema, exactly 3 ops + 3 validators, all implemented, sorted; registry ids match OPS_IMPL/VALIDATORS keys exactly (code<->JSON sync test)"
+  - "CLI exit mapping demonstrated by negative tests: 0 (good score / info-only / empty selection), 1 (usage), 2 (missing file, schema violation, unknown op, failing shelf for select), 3 (error findings); mtdt.py writes no files"
+  - "normalize is idempotent and preserves part/event order; canonical bytes round-trip"
+  - "update_index: dry-run writes nothing (byte-identical after run); a P1-lock-violating candidate (implementation: implemented) is refused with exit 2 and byte-identical file; --apply of a conforming add-op passes check_shelf --check afterwards; remove-op restores the exact original bytes; --rehash is idempotent"
+  - "import boundary: AST allowlist test passes for all P2 production files with a seeded negative case; test files contain no network/LLM imports"
+  - "test_source_layout accounts for every new source file (AGENTS.md scaffolding, mtdt.py, update_index.py, engine/*, tests/test_engine.py, tests/fixtures/scores/*.json); no unexpected files"
+  - "all new files UTF-8 without BOM, LF"
+  - "all four AGENTS.md gate commands exit 0; git diff --check clean"
+  - "no file in this repository requests or stores a credential; no network or LLM call exists anywhere in the P2 toolchain"
+test_cases:
+  - "docs/spec-p2.test.yaml: rat-score-fixtures (deterministic)"
+  - "docs/spec-p2.test.yaml: score-schema-negatives"
+  - "docs/spec-p2.test.yaml: normalize-idempotent"
+  - "docs/spec-p2.test.yaml: cli-exit-code-mapping"
+  - "docs/spec-p2.test.yaml: registry-schema-and-sync"
+  - "docs/spec-p2.test.yaml: validators-contract"
+  - "docs/spec-p2.test.yaml: import-boundary (static AST + seeded violation)"
+  - "docs/spec-p2.test.yaml: update-index-refusal and update-index-apply"
+  - "docs/spec-p2.test.yaml: select-cli-parity"
+  - "docs/spec-p2.test.yaml: p2-source-encoding"
+  - "docs/spec-p2.test.yaml: test-files-no-network"
+dependencies:
+  - "docs/draft-p2.md approved by the operator (RAT table is the pre-registered contract)"
+  - "this spec reviewed and approved before P2 implementation starts"
+  - "P1 shelf complete and green (docs/spec.yaml implemented; check command exit 0)"
+  - "Python 3.10+ as python3/python; stdlib only; no Cargo/Rust, no bridge, no parent-repo changes"
+risks:
+  - "score schema blind spots: mitigated by the RAT-first fixtures; a miss amends the spec before code lands"
+  - "registry.json vs code drift: mitigated by load-time sync check + tests; residual risk accepted until P3 exercises real card wiring"
+  - "measure-fill semantics on exotic meters (e.g. 6/8 coverage arithmetic): mitigated by good-melody 3/4; 6/8 left to P3 fixtures"
+  - "select runs the full shelf check per invocation (hashes 36 bodies): accepted as milliseconds-scale; optimize only if measured slow"
+constraints:
+  - "stdlib only, closed allowlist; no network/LLM/subprocess/eval in production P2 files"
+  - "no silent checks: skipped checks surface as info findings; unimplemented ids do not exist in the registry"
+  - "check_shelf.py frozen; P1 locks untouched; skills/index.json hand-editing forbidden"
+  - "no credential, secret, or API_SECRET anywhere in this repository"
+  - "UTF-8 without BOM, LF; PowerShell nested-quote ban for manual verification"
+  - "cards stay status draft and their ops/validators stay unimplemented/advisory throughout P2 (wiring is P3)"
+promotion:
+  review_gate: "operator approval of docs/draft-p2.md + this spec before implementation"
+  p2_done: "all acceptance criteria green; RAT 5/5; four gate commands exit 0; docs/report-p2.md written"
+  p2_to_p3: >-
+    P3 wires cards to the implemented registry (status draft -> validated),
+    adds the SATB end-to-end slice with counterpoint/voice-crossing
+    validators and a bounded controller/worker loop. Relaxing the P1
+    'implemented' lock happens ONLY with a P3 spec change.
+unknowns:
+  - "score schema blind spots (RAT resolves before implementation)"
+  - "6/8-style meter coverage arithmetic (3/4 covered by RAT; 6/8 deferred)"
+  - "registry/code drift behavior under future edits (sync tests are the guard)"
+  - "update_index UX (dry-run report wording) — revisited after first real use"
