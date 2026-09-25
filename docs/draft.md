@@ -160,9 +160,8 @@ LLMに楽譜（スコア）関連の判断をさせるとき、判断根拠を�
 
 ## Done criteria（P0 = 本draft）
 
-- 本 draft が承認され、`draft/.index/taxonomy.yaml` に `mtdt-lite: topic: agent-infra`
-  の override が入っていること
-- 後続フェーズの境界（P1–P4）と、P1 実装前に `specs/mtdt-lite.yaml` が必要なことが
+- 本 draft が承認されていること
+- 後続フェーズの境界（P1–P4）と、P1 実装前に `docs/spec.yaml` が必要なことが
   明記されていること
 - シード36カードの配分表と SATB 縦断スライスの要件（3カテゴリ + 3バリデータ以上）
   が合意事項として記録されていること
@@ -184,17 +183,17 @@ P0 → P1 へ進む条件:
 
 1. 本 draft の Decisions（特に Phase 1 = 棚のみ、36カード、LLM実行パターン、
    安全原則）が operator 承認を得ること
-2. `specs/mtdt-lite.yaml` が書かれ、受け入れ基準が曖昧でないこと
+2. `docs/spec.yaml` が書かれ、受け入れ基準が曖昧でないこと
    （**P1 実装の前に spec が必須**）
-3. taxonomy override が反映され、本 draft 分の draft index 再生成が完了していること
-   （`node scripts/build-draft-index.cjs --check` 通過を確認済み）
+3. 本スタンドアロンリポでは親リポの draft-index / taxonomy ゲートは適用しない。
+   受け入れは `docs/spec.yaml` と棚チェッカー（`--check` exit 0）で判定する。
 
 ## Phases
 
-- **P0（本draft）**: 設計文書 + taxonomy override。実装なし。
+- **P0（本draft）**: 設計文書。実装なし。
 - **P1**: スキル棚36カード + 機械可読インデックス + カードチェッカー +
-  選択フィクスチャ。LLM 呼び出しゼロ。**事前に `specs/mtdt-lite.yaml` が必要。**
-- **P2**: Python CLI / 操作レジストリのスタブを `tools/mtdt-lite` 以下に作成。
+  選択フィクスチャ。LLM 呼び出しゼロ。**事前に `docs/spec.yaml` が必要。**
+- **P2**: Python CLI / 操作レジストリのスタブを本リポ直下に作成。
   JSON スコアモデルのスキーマ確定。
 - **P3**: エンドツーエンド縦断スライス（SATB コラールハーモニゼーション、
   harmony/counterpoint/notation + 3バリデータ以上）。
@@ -202,7 +201,7 @@ P0 → P1 へ進む条件:
 
 ## Documents
 
-- spec: `specs/mtdt-lite.yaml` (P1 implemented)
-- test spec: `specs/mtdt-lite.test.yaml` (P1 tests implemented)
-- report: `reports/mtdt-lite.md`
-- P2以降: score JSON / op registry / validator は spec另行
+- spec: `docs/spec.yaml` (P1 implemented)
+- test spec: `docs/spec.test.yaml` (P1 tests implemented)
+- report: `docs/report-p1.md`
+- P2以降: score JSON / op registry / validator は spec を別行で更新する
