@@ -4,7 +4,7 @@ status: implemented
 status_note: >-
   P1 skill shelf implemented and verified on 2026-09-25. P2 score model,
   operation registry, and validators remain out of scope.
-source_draft: draft/mtdt-lite.md
+source_draft: docs/draft.md
 phase: P1
 goal: >-
   Deliver the P1 skill shelf for mtdt-lite: 36 inspectable skill cards with a
@@ -26,10 +26,10 @@ clean_room: >-
   or parity with mtdt is claimed or implied. Only the public concepts
   (shelf / selection / inspectability) are recombined clean-room.
 scope:
-  - "tools/mtdt-lite/skills/index.json — canonical machine-readable index (JSON chosen deliberately so P1 needs only the Python stdlib)"
+  - "skills/index.json — canonical machine-readable index (JSON chosen deliberately so P1 needs only the Python stdlib)"
   - "36 skill card bodies skills/<id>.md, English Markdown, one card per file"
-  - "tools/mtdt-lite/check_shelf.py — deterministic checker, stdlib only, --check and --selection-fixture modes"
-  - "tools/mtdt-lite/tests/ — unittest suite plus tests/fixtures/selection_cases.json"
+  - "check_shelf.py — deterministic checker, stdlib only, --check and --selection-fixture modes"
+  - "tests/ — unittest suite plus tests/fixtures/selection_cases.json"
   - "YAML is NOT required for the P1 index (stdlib json suffices; YAML would need a third-party parser)"
   - "no MusicXML/MIDI parser is part of P1"
 out_of_scope:
@@ -58,9 +58,9 @@ outputs:
     - "analysis reports or lists of legal candidate op IDs (LLM output restricted to these, P2+)"
     - "MusicXML / MIDI export (interchange, P2+)"
 file_layout:
-  root: tools/mtdt-lite
+  root: .
   tree: >-
-    tools/mtdt-lite/
+    ./
       check_shelf.py
       skills/
         index.json
@@ -73,10 +73,10 @@ file_layout:
     - "index.json lives inside skills/ and is the single canonical machine-readable index"
     - "body_path values are relative to skills/ (e.g. 'pitch-intervals.md')"
     - "JSON chosen deliberately for the P1 index: Python stdlib json is sufficient and keeps P1 third-party-free"
-    - "runtime artifacts (__pycache__/, *.pyc) under tools/mtdt-lite, e.g. produced by unittest discovery, are allowed and ignored as non-source; layout checks consider committed/source files only"
+    - "runtime artifacts (__pycache__/, *.pyc) in this repository, e.g. produced by unittest discovery, are allowed and ignored as non-source; layout checks consider committed/source files only"
 seed_catalog:
   total: 36
-  source: "draft/mtdt-lite.md seed table; the representative names there are finalized as the exact P1 seed IDs"
+  source: "docs/draft.md seed table; the representative names there are finalized as the exact P1 seed IDs"
   counts:
     foundations: 4
     counterpoint: 4
@@ -232,12 +232,12 @@ card_body_contract:
     The checker rejects any body containing kana (U+3040-U+30FF) or CJK
     ideographs (U+4E00-U+9FFF) as the automated proxy for 'English body'.
 checker_contract:
-  file: tools/mtdt-lite/check_shelf.py
+  file: check_shelf.py
   runtime: "Python 3.10+ standard library only; no third-party packages, no network, no LLM; production checker code uses no subprocess"
   paths:
     root: >-
       --root is REQUIRED and names the skills directory (e.g.
-      tools/mtdt-lite/skills) containing index.json and the body files; all
+      skills) containing index.json and the body files; all
       shelf validation resolves against it.
     fixture: >-
       --selection-fixture <path> resolves from the current working directory
@@ -245,7 +245,7 @@ checker_contract:
     self_scan: >-
       The production self-scan resolves check_shelf.py from __file__, never
       from --root; it scans production checker code only, not the skills
-      directory and not the whole tools tree.
+      directory and not the whole repo tree.
   modes:
     - "--check: validate the shelf ONLY (index, bodies, self-scan — no fixture involvement), print reasons, exit per exit_codes; read-only"
     - >-
@@ -294,7 +294,7 @@ checker_contract:
       production self-scan: AST import scan of check_shelf.py only (resolved
       from __file__), imports restricted to the stdlib allowlist below and no
       banned network/process/LLM module (violation: exit 5); the skills
-      directory and the rest of the tools tree are NOT text-scanned
+      directory and the rest of the repo are NOT text-scanned
   stdlib_allowlist:
     modules: [argparse, ast, hashlib, json, pathlib, re, sys, unicodedata]
     note: >-
@@ -340,7 +340,7 @@ selection_smoke:
     ranking: "sort by (score desc, id asc); take the first top_k=3 cards with score >= 1; fewer positive-score cards yield a shorter list"
     determinism: "no randomness, no clock, no network, no model; same input always yields the same list"
   fixture:
-    path: tools/mtdt-lite/tests/fixtures/selection_cases.json
+    path: tests/fixtures/selection_cases.json
     schema: "[{id, task, expected_ids, expected_mode, expected_category, rationale}]"
     fields:
       id: "kebab-case case id, unique within the fixture"
@@ -351,36 +351,36 @@ selection_smoke:
       rationale: "human-readable reason; not machine-checked"
     minimum: ">= 12 cases; all 11 categories covered; at least one not_when exclusion case; at least one mode- or category-filtered case"
 commands:
-  check: "python3 tools/mtdt-lite/check_shelf.py --root tools/mtdt-lite/skills --check"
-  selection_fixture: "python3 tools/mtdt-lite/check_shelf.py --root tools/mtdt-lite/skills --selection-fixture tools/mtdt-lite/tests/fixtures/selection_cases.json"
-  unit_tests: 'python3 -m unittest discover -s tools/mtdt-lite/tests -p "test_*.py"'
+  check: "python3 check_shelf.py --root skills --check"
+  selection_fixture: "python3 check_shelf.py --root skills --selection-fixture tests/fixtures/selection_cases.json"
+  unit_tests: 'python3 -m unittest discover -s tests -p "test_*.py"'
   notes:
     - "Windows: `python` is equivalent where the py launcher is installed"
     - "cargo is NOT required for P1; no Rust workspace file may change"
     - "--root always names the skills directory; fixture paths resolve from the current working directory; the self-scan resolves check_shelf.py from __file__"
 acceptance:
   - "this spec passes review BEFORE any P1 code is written"
-  - "tools/mtdt-lite/ contains exactly the P1 layout: check_shelf.py, skills/index.json, 36 skills/<id>.md bodies, tests/ with fixtures/selection_cases.json"
+  - "the repository root contains exactly the P1 layout: check_shelf.py, skills/index.json, 36 skills/<id>.md bodies, tests/ with fixtures/selection_cases.json"
   - "index.json: schema_version '1', exactly 36 entries, all enums valid, ids unique kebab-case, catalog_sha256 present"
   - "all 36 card statuses are draft; zero ops/validators carry implementation 'implemented'"
   - "check command exits 0 on the finished shelf; selection fixture command exits 0; unittest discovery exits 0"
   - "negative tests demonstrate the exit-code mapping (1/2/3/4/5) with first-applicable-category precedence; the checker never exits 0 on a seeded violation"
-  - "no file under tools/mtdt-lite requests or stores API_SECRET or any credential; no network/LLM call exists in the P1 toolchain"
+  - "no file in this repository requests or stores API_SECRET or any credential; no network/LLM call exists in the P1 toolchain"
   - "all files UTF-8 without BOM, LF"
 test_cases:
-  - "static schema/layout tests (specs/mtdt-lite.test.yaml: index-schema-valid, index-idempotent-rewrite, encoding-and-layout)"
-  - "exact catalog tests (specs/mtdt-lite.test.yaml: catalog-exact-36)"
+  - "static schema/layout tests (docs/spec.test.yaml: index-schema-valid, index-idempotent-rewrite, encoding-and-layout)"
+  - "exact catalog tests (docs/spec.test.yaml: catalog-exact-36)"
   - "body tests (bodies-language-and-sections, hash-integrity)"
   - "restriction tests (no-implemented-checks, no-llm-no-network-stdlib-only)"
   - "selection tests (selection-fixture-passes, selection-fixture-coverage)"
   - "dependency tests (dependency-references-resolve, op-validator-availability)"
   - "checker behavior (checker-exit-code-mapping)"
-  - "manual review cases (specs/mtdt-lite.test.yaml: category-boundary-metric-hierarchy, public-references-review)"
+  - "manual review cases (docs/spec.test.yaml: category-boundary-metric-hierarchy, public-references-review)"
 dependencies:
-  - "draft/mtdt-lite.md approved (P0 done); taxonomy override mtdt-lite: topic: agent-infra in place"
+  - "docs/draft.md approved (P0 done); the parent repo's draft-index / taxonomy gates do not apply to this standalone repo (acceptance is docs/spec.yaml plus the shelf checker exiting 0)"
   - "this spec reviewed and approved before P1 implementation starts"
   - "Python 3.10+ available as python3 (Windows: python); stdlib only"
-  - "no Cargo/Rust, no bridge, no userscript, no AGENTS/README changes"
+  - "no Cargo/Rust, no bridge, no userscript, no AGENTS/README changes in the parent repo"
 implementation_boundary: >-
   P1 delivers ONLY the skill shelf: 36 card bodies, index.json, check_shelf.py,
   the selection fixture and unittests. No score model, no op registry, no
@@ -396,7 +396,7 @@ promotion:
     condition 2). P1 implementation begins only after operator approval of
     this file.
   p1_done: "all acceptance criteria green: shelf complete, check + fixture + unittest commands exit 0, negative tests demonstrate the exit-code mapping"
-  p1_to_p2: "P2 adds the score JSON schema, op registry and validator implementations under tools/mtdt-lite/; validated status requires referenced ops/validators implemented plus selection smoke passing; stable requires no observed mis-trigger/mis-apply in real use"
+  p1_to_p2: "P2 adds the score JSON schema, op registry and validator implementations at the repository root; validated status requires referenced ops/validators implemented plus selection smoke passing; stable requires no observed mis-trigger/mis-apply in real use"
   p2_to_p3: "P3 runs the SATB end-to-end slice: harmony + counterpoint + notation with >= 3 real validators (e.g. parallel fifths/octaves, voice range, voice crossing/spacing)"
   p4: "demand-driven card growth beyond the 36 seed cards; no catalog-completionism"
 unknowns:
@@ -416,8 +416,8 @@ risks:
 constraints:
   - "no silent checks: unimplemented ops/validators are labeled as such everywhere they appear"
   - "P1 completes with zero LLM calls; deterministic tests never depend on a live model"
-  - "no API_SECRET or any credential in any tools/mtdt-lite file"
+  - "no API_SECRET or any credential in any file in this repository"
   - "stdlib-only Python; no third-party packages (this is why the index is JSON, not YAML)"
-  - "UTF-8 without BOM, LF everywhere under tools/mtdt-lite"
+  - "UTF-8 without BOM, LF everywhere in this repository"
   - "the 36 seed cards are the fixed P1 set; growth is demand-driven and out of P1 scope"
   - "PowerShell nested-quote ban applies to any manual verification (repo rule)"
