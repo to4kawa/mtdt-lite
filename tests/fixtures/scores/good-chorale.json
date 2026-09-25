@@ -1,0 +1,52 @@
+{
+  "schema_version": "1",
+  "title": "Good chorale excerpt",
+  "meter": {"numerator": 4, "denominator": 4},
+  "key": {"tonic": "C", "mode": "major"},
+  "parts": [
+    {
+      "id": "soprano",
+      "name": "Soprano",
+      "range": {"low": "C4", "high": "G5"},
+      "events": [
+        {"measure": 1, "onset": 0, "duration": "1/2", "pitch": "C5"},
+        {"measure": 1, "onset": "1/2", "duration": "1/2", "pitch": "C5"},
+        {"measure": 2, "onset": 0, "duration": "1/2", "pitch": "B4"},
+        {"measure": 2, "onset": "1/2", "duration": "1/2", "pitch": "C5"}
+      ]
+    },
+    {
+      "id": "alto",
+      "name": "Alto",
+      "range": {"low": "G3", "high": "C5"},
+      "events": [
+        {"measure": 1, "onset": 0, "duration": "1/2", "pitch": "E4"},
+        {"measure": 1, "onset": "1/2", "duration": "1/2", "pitch": "E4"},
+        {"measure": 2, "onset": 0, "duration": "1/2", "pitch": "D4"},
+        {"measure": 2, "onset": "1/2", "duration": "1/2", "pitch": "E4"}
+      ]
+    },
+    {
+      "id": "tenor",
+      "name": "Tenor",
+      "range": {"low": "C3", "high": "G4"},
+      "events": [
+        {"measure": 1, "onset": 0, "duration": "1/2", "pitch": "G3"},
+        {"measure": 1, "onset": "1/2", "duration": "1/2", "pitch": "G3"},
+        {"measure": 2, "onset": 0, "duration": "1/2", "pitch": "F3"},
+        {"measure": 2, "onset": "1/2", "duration": "1/2", "pitch": "G3"}
+      ]
+    },
+    {
+      "id": "bass",
+      "name": "Bass",
+      "range": {"low": "E2", "high": "C4"},
+      "events": [
+        {"measure": 1, "onset": 0, "duration": "1/2", "pitch": "C3"},
+        {"measure": 1, "onset": "1/2", "duration": "1/2", "pitch": "C3"},
+        {"measure": 2, "onset": 0, "duration": "1/2", "pitch": "G2"},
+        {"measure": 2, "onset": "1/2", "duration": "1/2", "pitch": "C3"}
+      ]
+    }
+  ]
+}

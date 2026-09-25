@@ -1,0 +1,43 @@
+{
+  "schema_version": "1",
+  "ops": [
+    {
+      "id": "score-load",
+      "implementation": "implemented",
+      "summary": "Read a score file, validate it against the score schema, and report title, part, event, and measure counts."
+    },
+    {
+      "id": "score-normalize",
+      "implementation": "implemented",
+      "summary": "Read a score file and emit the canonical, idempotent score serialization with reduced fractions."
+    },
+    {
+      "id": "score-validate",
+      "implementation": "implemented",
+      "summary": "Read a score file and run every registered mechanical validator, returning the findings list."
+    }
+  ],
+  "validators": [
+    {
+      "id": "measure-fill",
+      "severity": "error",
+      "autofix": false,
+      "implementation": "implemented",
+      "summary": "Every part must fill every measure up to the length of the longest part; gaps and empty measures are findings."
+    },
+    {
+      "id": "note-overlap",
+      "severity": "error",
+      "autofix": false,
+      "implementation": "implemented",
+      "summary": "Events within a part must not overlap in time or duplicate an earlier event."
+    },
+    {
+      "id": "voice-range",
+      "severity": "error",
+      "autofix": false,
+      "implementation": "implemented",
+      "summary": "Pitches must sit inside the part's declared range; a missing range produces a visible info skip."
+    }
+  ]
+}

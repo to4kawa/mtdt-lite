@@ -1,0 +1,18 @@
+{
+  "schema_version": "1",
+  "title": "Overlapping events in one part",
+  "meter": {"numerator": 4, "denominator": 4},
+  "key": {"tonic": "C", "mode": "major"},
+  "parts": [
+    {
+      "id": "lead",
+      "name": "Lead",
+      "range": {"low": "C4", "high": "C6"},
+      "events": [
+        {"measure": 1, "onset": 0, "duration": "1/2", "pitch": "C5"},
+        {"measure": 1, "onset": "1/4", "duration": "1/4", "pitch": "E5"},
+        {"measure": 1, "onset": "1/2", "duration": "1/2", "pitch": "G5"}
+      ]
+    }
+  ]
+}

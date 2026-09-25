@@ -1,0 +1,17 @@
+{
+  "schema_version": "1",
+  "title": "Pitch below the declared range",
+  "meter": {"numerator": 4, "denominator": 4},
+  "key": {"tonic": "C", "mode": "major"},
+  "parts": [
+    {
+      "id": "lead",
+      "name": "Lead",
+      "range": {"low": "C4", "high": "G5"},
+      "events": [
+        {"measure": 1, "onset": 0, "duration": "1/2", "pitch": "G3"},
+        {"measure": 1, "onset": "1/2", "duration": "1/2", "pitch": "C4"}
+      ]
+    }
+  ]
+}

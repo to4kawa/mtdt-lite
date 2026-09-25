@@ -1,0 +1,28 @@
+{
+  "schema_version": "1",
+  "title": "Underfull second measure in harmony",
+  "meter": {"numerator": 4, "denominator": 4},
+  "key": {"tonic": "F", "mode": "major"},
+  "parts": [
+    {
+      "id": "melody",
+      "name": "Melody",
+      "range": {"low": "C4", "high": "G5"},
+      "events": [
+        {"measure": 1, "onset": 0, "duration": "1/2", "pitch": "A4"},
+        {"measure": 1, "onset": "1/2", "duration": "1/2", "pitch": "B4"},
+        {"measure": 2, "onset": 0, "duration": "1/2", "pitch": "C5"},
+        {"measure": 2, "onset": "1/2", "duration": "1/2", "pitch": "D5"}
+      ]
+    },
+    {
+      "id": "harmony",
+      "name": "Harmony",
+      "range": {"low": "C4", "high": "D5"},
+      "events": [
+        {"measure": 1, "onset": 0, "duration": "1/2", "pitch": "C4"},
+        {"measure": 1, "onset": "1/2", "duration": "1/2", "pitch": "D4"}
+      ]
+    }
+  ]
+}

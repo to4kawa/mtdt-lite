@@ -1,0 +1,17 @@
+{
+  "schema_version": "1",
+  "title": "Good melody with a rest",
+  "meter": {"numerator": 3, "denominator": 4},
+  "key": {"tonic": "G", "mode": "major"},
+  "parts": [
+    {
+      "id": "melody",
+      "name": "Melody",
+      "events": [
+        {"measure": 1, "onset": 0, "duration": "1/4", "pitch": "D5"},
+        {"measure": 1, "onset": "1/4", "duration": "1/4", "pitch": null},
+        {"measure": 1, "onset": "1/2", "duration": "1/4", "pitch": "E5"}
+      ]
+    }
+  ]
+}

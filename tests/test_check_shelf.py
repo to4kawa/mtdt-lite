@@ -214,6 +214,22 @@ class ShelfTests(unittest.TestCase):
     def test_source_layout(self):
         expected = {CHECKER.relative_to(TOOL_ROOT), (SKILLS / 'index.json').relative_to(TOOL_ROOT), FIXTURE.relative_to(TOOL_ROOT), Path(__file__).relative_to(TOOL_ROOT)}
         expected.update((SKILLS / f'{record["id"]}.md').relative_to(TOOL_ROOT) for record in read_index()['skills'])
+        expected.update(Path(path) for path in (
+            'mtdt.py',
+            'update_index.py',
+            'tests/test_engine.py',
+            'engine/__init__.py',
+            'engine/score.py',
+            'engine/ops.py',
+            'engine/validators.py',
+            'engine/registry.py',
+            'engine/registry.json',
+            'tests/fixtures/scores/good-chorale.json',
+            'tests/fixtures/scores/good-melody.json',
+            'tests/fixtures/scores/bad-underfull.json',
+            'tests/fixtures/scores/bad-range.json',
+            'tests/fixtures/scores/bad-overlap.json',
+        ))
         actual = {path.relative_to(TOOL_ROOT) for path in TOOL_ROOT.rglob('*') if path.is_file() and '__pycache__' not in path.parts and path.suffix != '.pyc' and path.relative_to(TOOL_ROOT).parts[0] not in NON_TOOL_TOP}
         self.assertEqual(actual, expected)
 
