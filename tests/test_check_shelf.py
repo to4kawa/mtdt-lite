@@ -12,7 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 TOOL_ROOT = ROOT
 # Repo scaffolding that is not part of the tool's tracked source set (see test_source_layout).
-NON_TOOL_TOP = {'.git', '.github', 'docs', 'README.md', 'LICENSE', '.gitignore', '.gitattributes'}
+NON_TOOL_TOP = {'.git', '.github', 'docs', 'README.md', 'LICENSE', '.gitignore', '.gitattributes', 'AGENTS.md'}
 CHECKER = TOOL_ROOT / 'check_shelf.py'
 SKILLS = TOOL_ROOT / 'skills'
 FIXTURE = TOOL_ROOT / 'tests/fixtures/selection_cases.json'
